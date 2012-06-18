@@ -1,1 +1,1 @@
-The first three PULSEtools pulseinfo.exe, pulseview.exe, and pulse2pulse.exe can parse various full waveform LiDAR formats. For the moment only the "pulte" component of each pulse (not the actual samples) are parsed.
+The first three PULSEtools pulseinfo.exe, pulseview.exe, and pulse2pulse.exe can parse various full waveform LiDAR formats. For the moment only the pulse component of each pulsewave (not the actual wave samples aka waves) are parsed.
