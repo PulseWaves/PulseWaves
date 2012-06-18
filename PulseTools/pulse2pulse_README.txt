@@ -24,7 +24,7 @@ Supported Pulse Inputs
   -i lidar.laz
   -i lidar.lgw
   -i lidar.lgc
-  -i lidar.sdf
+  -i lidar.sdf  (slow!!!)
   -h
 Supported PULSE Outputs
   -o pulse.pls

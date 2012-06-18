@@ -14,6 +14,11 @@
 
 ****************************************************************
 
+* use the right mouse button to make a menu pop up
+* switch between <f>irst and <l>ast samples with keys 'f' and 'l'
+* press 'W' to turn the display of a 50 pulses on and off.
+* use the key 'i' to select a particular sample 
+
 for more info:
 
 C:\released_code\pulsetools\bin>pulseview -h
@@ -24,7 +29,7 @@ Supported Pulse Inputs
   -i lidar.laz
   -i lidar.lgw
   -i lidar.lgc
-  -i lidar.sdf
+  -i lidar.sdf  (slow!!!)
   -h
 PULSEtools (by martin.isenburg@gmail.com) version 120614
 usage:
