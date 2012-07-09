@@ -14,6 +14,14 @@
 
 ****************************************************************
 
+example use:
+
+>> pulse2pulse.exe -i lidar.pls -gui
+>> pulse2pulse.exe -i lidar.laz -subseq 0 10000 -o lidar.pls 
+>> pulse2pulse.exe -i lidar.laz -subseq 0 10000 -o lidar.pls -owvz
+>> pulse2pulse.exe -i lidar.lgc -subseq 0 10000 -o lidar.pls -keep_descriptor 0
+>> pulse2pulse.exe -i lidar.lgw -subseq 0 10000 -o lidar.pls -clip_first_x_above 630500
+
 for more info:
 
 C:\released_code\pulsetools\bin>pulse2pulse.exe -h

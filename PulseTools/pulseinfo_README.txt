@@ -14,6 +14,15 @@
 
 ****************************************************************
 
+example use:
+
+>> pulseinfo.exe -i lidar.pls -gui
+>> pulseinfo.exe -i lidar.laz
+>> pulseinfo.exe -i lidar.lgc -o lidar.txt
+>> pulseinfo.exe -i lidar.sdf -clip_first_x_above 630500
+>> pulseinfo.exe -i lidar.lgw -no_var -clip_first_x_above 630500
+
+
 for more info:
 
 C:\released_code\pulsetools\bin>pulseinfo -h
