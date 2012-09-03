@@ -14,6 +14,10 @@
 
 ****************************************************************
 
+Note that for Optech's *.csd files the corresponding *.ndf and
+*.idx files need to be renamed to have the same base name as the
+CSD file or the tools will not be able to find them.
+
 * use the right mouse button to make a menu pop up
 * switch between <f>irst and <l>ast samples with keys 'f' and 'l'
 * press 'W' to turn the display of a 50 pulses on and off.
@@ -29,6 +33,7 @@ Supported Pulse Inputs
   -i lidar.laz
   -i lidar.lgw
   -i lidar.lgc
+  -i lidar.csd
   -i lidar.sdf  (slow!!!)
   -h
 PULSEtools (by martin.isenburg@gmail.com) version 120614

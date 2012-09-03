@@ -14,9 +14,14 @@
 
 ****************************************************************
 
+Note that for Optech's *.csd files the corresponding *.ndf and
+*.idx files need to be renamed to have the same base name as the
+CSD file or the tools will not be able to find them.
+
 example use:
 
 >> pulse2pulse.exe -i lidar.pls -gui
+>> pulse2pulse.exe -i lidar.csd -start_at_pulse 10000 -o lidar.pls 
 >> pulse2pulse.exe -i lidar.laz -subseq 0 10000 -o lidar.pls 
 >> pulse2pulse.exe -i lidar.laz -subseq 0 10000 -o lidar.pls -owvz
 >> pulse2pulse.exe -i lidar.lgc -subseq 0 10000 -o lidar.pls -keep_descriptor 0
@@ -32,6 +37,7 @@ Supported Pulse Inputs
   -i lidar.laz
   -i lidar.lgw
   -i lidar.lgc
+  -i lidar.csd
   -i lidar.sdf  (slow!!!)
   -h
 Supported PULSE Outputs
