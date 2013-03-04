@@ -2,8 +2,9 @@
 
   pulseinfo
 
-  reads full waveform LIDAR data from a variety of proprietary
-  formats and outputs a textual description of their content.
+  reads full waveform LIDAR data from PulseWaves format and also
+  a variety of other proprietary formats and outputs a textual
+  description of their content.
  
   For updates you can follow PulseWaves at
 
@@ -16,6 +17,7 @@
 
 example use:
 
+>> pulseinfo.exe -version
 >> pulseinfo.exe -i lidar.pls -gui
 >> pulseinfo.exe -i lidar.laz
 >> pulseinfo.exe -i lidar.csd
@@ -36,7 +38,7 @@ Supported Pulse Inputs
   -i lidar.csd
   -i lidar.sdf  (slow!!!)
   -h
-PULSEtools (by martin.isenburg@gmail.com) version 120614
+PULSEtools (by martin.isenburg@rapidlasso.com) version 120614
 usage:
 pulseinfo -i pulsewaves.pls -no_check
 pulseinfo -i las13fwf.las -o lidar_info.txt
@@ -47,4 +49,4 @@ pulseinfo -i *.pls -repair
 
 ---------------
 
-if you find bugs let me (martin.isenburg@gmail.com) know.
+if you find bugs let me (martin.isenburg@rapidlasso.com) know.

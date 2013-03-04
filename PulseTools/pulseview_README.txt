@@ -2,8 +2,9 @@
 
   pulseview
 
-  reads full waveform LIDAR data from a variety of proprietary
-  formats and visualizes them with a simple 3D viewer.
+  reads full waveform LIDAR data from the PulseWaves format and
+  also a variety of other proprietary formats and visualizes them
+  with a simple 3D viewer.
  
   For updates you can follow PulseWaves at
 
@@ -22,6 +23,8 @@ CSD file or the tools will not be able to find them.
 * switch between <f>irst and <l>ast samples with keys 'f' and 'l'
 * press 'W' to turn the display of a 50 pulses on and off.
 * use the key 'i' to select a particular sample 
+* go to <n>ext and <b>revious pulse with keys 'n' and 'b'
+* switch the <c>oloring of the samples with key 'c'
 
 for more info:
 
@@ -36,7 +39,7 @@ Supported Pulse Inputs
   -i lidar.csd
   -i lidar.sdf  (slow!!!)
   -h
-PULSEtools (by martin.isenburg@gmail.com) version 120614
+PULSEtools (by martin.isenburg@rapidlasso.com) version 120614
 usage:
 pulseview -i pulsewaves.pls -pulses 200000
 pulseview -i las13fwf.las -win 1600 1200
@@ -47,4 +50,4 @@ pulseview -h
 
 ---------------
 
-if you find bugs let me (martin.isenburg@gmail.com) know.
+if you find bugs let me (martin.isenburg@rapidlasso.com) know.
