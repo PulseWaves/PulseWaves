@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\arithmeticdecoder.cpp" />
+    <ClCompile Include="..\arithmeticencoder.cpp" />
+    <ClCompile Include="..\arithmeticmodel.cpp" />
+    <ClCompile Include="..\integercompressor.cpp" />
+    <ClCompile Include="..\pulsedescriptor.cpp" />
+    <ClCompile Include="..\pulsefilter.cpp" />
+    <ClCompile Include="..\pulseheader.cpp" />
+    <ClCompile Include="..\pulsepulse.cpp" />
+    <ClCompile Include="..\pulsereader.cpp" />
+    <ClCompile Include="..\pulsereadermerged.cpp" />
+    <ClCompile Include="..\pulsereader_csd.cpp" />
+    <ClCompile Include="..\pulsereader_gcw.cpp" />
+    <ClCompile Include="..\pulsereader_las.cpp" />
+    <ClCompile Include="..\pulsereader_lgw.cpp" />
+    <ClCompile Include="..\pulsereader_pls.cpp" />
+    <ClCompile Include="..\pulsereader_sdf.cpp" />
+    <ClCompile Include="..\pulsereaditemcompressed_v1.cpp" />
+    <ClCompile Include="..\pulsereadpulse.cpp" />
+    <ClCompile Include="..\pulsereadwaves_compressed.cpp" />
+    <ClCompile Include="..\pulsereadwaves_raw.cpp" />
+    <ClCompile Include="..\pulsetransform.cpp" />
+    <ClCompile Include="..\pulseutility.cpp" />
+    <ClCompile Include="..\pulsevlrs.cpp" />
+    <ClCompile Include="..\pulsewriteitemcompressed_v1.cpp" />
+    <ClCompile Include="..\pulsewritepulse.cpp" />
+    <ClCompile Include="..\pulsewriter.cpp" />
+    <ClCompile Include="..\pulsewriter_pls.cpp" />
+    <ClCompile Include="..\pulsewriter_txt.cpp" />
+    <ClCompile Include="..\pulsewritewaves.cpp" />
+    <ClCompile Include="..\pulsewritewaves_compressed.cpp" />
+    <ClCompile Include="..\pulsewritewaves_raw.cpp" />
+    <ClCompile Include="..\pulsezip.cpp" />
+    <ClCompile Include="..\riwavelib\inc\fwifc.c" />
+    <ClCompile Include="..\waveswaves.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\inc\mydefs.hpp" />
+    <ClInclude Include="..\..\inc\pulseattributer.hpp" />
+    <ClInclude Include="..\..\inc\pulsedescriptor.hpp" />
+    <ClInclude Include="..\..\inc\pulseextraattribute.hpp" />
+    <ClInclude Include="..\..\inc\pulsefilter.hpp" />
+    <ClInclude Include="..\..\inc\pulseheader.hpp" />
+    <ClInclude Include="..\..\inc\pulseitem.hpp" />
+    <ClInclude Include="..\..\inc\pulsepulse.hpp" />
+    <ClInclude Include="..\..\inc\pulsepulse_pls.hpp" />
+    <ClInclude Include="..\..\inc\pulsequantizer.hpp" />
+    <ClInclude Include="..\..\inc\pulsereader.hpp" />
+    <ClInclude Include="..\..\inc\pulsereadermerged.hpp" />
+    <ClInclude Include="..\..\inc\pulsereader_csd.hpp" />
+    <ClInclude Include="..\..\inc\pulsereader_gcw.hpp" />
+    <ClInclude Include="..\..\inc\pulsereader_las.hpp" />
+    <ClInclude Include="..\..\inc\pulsereader_lgw.hpp" />
+    <ClInclude Include="..\..\inc\pulsereader_pls.hpp" />
+    <ClInclude Include="..\..\inc\pulsereader_sdf.hpp" />
+    <ClInclude Include="..\..\inc\pulsetransform.hpp" />
+    <ClInclude Include="..\..\inc\pulseutility.hpp" />
+    <ClInclude Include="..\..\inc\pulsevlrs.hpp" />
+    <ClInclude Include="..\..\inc\pulsewaves.hpp" />
+    <ClInclude Include="..\..\inc\pulsewavesdefinitions.hpp" />
+    <ClInclude Include="..\..\inc\pulsewriter.hpp" />
+    <ClInclude Include="..\..\inc\pulsewriter_pls.hpp" />
+    <ClInclude Include="..\..\inc\pulsewriter_txt.hpp" />
+    <ClInclude Include="..\..\inc\pulsezip.hpp" />
+    <ClInclude Include="..\..\inc\wavesreader.hpp" />
+    <ClInclude Include="..\..\inc\waveswaves.hpp" />
+    <ClInclude Include="..\..\inc\waveswriter.hpp" />
+    <ClInclude Include="..\..\inc\waveswriter_pls.hpp" />
+    <ClInclude Include="..\arithmeticdecoder.hpp" />
+    <ClInclude Include="..\arithmeticencoder.hpp" />
+    <ClInclude Include="..\arithmeticmodel.hpp" />
+    <ClInclude Include="..\bytestreamin.hpp" />
+    <ClInclude Include="..\bytestreamin_array.hpp" />
+    <ClInclude Include="..\bytestreamin_file.hpp" />
+    <ClInclude Include="..\bytestreamin_istream.hpp" />
+    <ClInclude Include="..\bytestreamout.hpp" />
+    <ClInclude Include="..\bytestreamout_array.hpp" />
+    <ClInclude Include="..\bytestreamout_file.hpp" />
+    <ClInclude Include="..\bytestreamout_nil.hpp" />
+    <ClInclude Include="..\bytestreamout_ostream.hpp" />
+    <ClInclude Include="..\entropydecoder.hpp" />
+    <ClInclude Include="..\entropyencoder.hpp" />
+    <ClInclude Include="..\integercompressor.hpp" />
+    <ClInclude Include="..\pulsereaditem.hpp" />
+    <ClInclude Include="..\pulsereaditemcompressed_v1.hpp" />
+    <ClInclude Include="..\pulsereaditemraw.hpp" />
+    <ClInclude Include="..\pulsereadpulse.hpp" />
+    <ClInclude Include="..\pulsereadwaves.hpp" />
+    <ClInclude Include="..\pulsereadwaves_compressed.hpp" />
+    <ClInclude Include="..\pulsereadwaves_raw.hpp" />
+    <ClInclude Include="..\pulsewriteitem.hpp" />
+    <ClInclude Include="..\pulsewriteitemcompressed_v1.hpp" />
+    <ClInclude Include="..\pulsewriteitemraw.hpp" />
+    <ClInclude Include="..\pulsewritepulse.hpp" />
+    <ClInclude Include="..\pulsewritewaves.hpp" />
+    <ClInclude Include="..\pulsewritewaves_compressed.hpp" />
+    <ClInclude Include="..\pulsewritewaves_raw.hpp" />
+    <ClInclude Include="..\pulseziphelper.hpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{14009B38-546F-4F84-BF6C-6F15C376CC7C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>pulsewaves</RootNamespace>
+    <ProjectName>pulsewavesLIB</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;PULSEWAVES_SDF;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\..\..\lastools\laslib\inc;..\..\src\riwavelib\inc</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy $(OutDir)pulsewavesLIB.lib ..\..\..\pulsewaves\lib\pulsewavesD.lib</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;PULSEWAVES_SDF;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\..\..\lastools\laslib\inc;..\..\src\riwavelib\inc</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy  $(OutDir)pulsewavesLIB.lib  ..\..\..\pulsewaves\lib\pulsewaves.lib</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

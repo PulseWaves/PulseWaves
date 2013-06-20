@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pulsewavesDLL", "src\project\pulsewavesDLL.vcxproj", "{81A44EF6-5D6B-4AA3-8C5A-6F7D87BA8F1F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pulsewavesLIB", "src\project\pulsewavesLIB.vcxproj", "{14009B38-546F-4F84-BF6C-6F15C376CC7C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "exampleLIB", "example\project\exampleLIB.vcxproj", "{A6281E07-4773-4D85-A026-1D708BEBB644}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{81A44EF6-5D6B-4AA3-8C5A-6F7D87BA8F1F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{81A44EF6-5D6B-4AA3-8C5A-6F7D87BA8F1F}.Debug|Win32.Build.0 = Debug|Win32
+		{81A44EF6-5D6B-4AA3-8C5A-6F7D87BA8F1F}.Release|Win32.ActiveCfg = Release|Win32
+		{81A44EF6-5D6B-4AA3-8C5A-6F7D87BA8F1F}.Release|Win32.Build.0 = Release|Win32
+		{14009B38-546F-4F84-BF6C-6F15C376CC7C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{14009B38-546F-4F84-BF6C-6F15C376CC7C}.Debug|Win32.Build.0 = Debug|Win32
+		{14009B38-546F-4F84-BF6C-6F15C376CC7C}.Release|Win32.ActiveCfg = Release|Win32
+		{14009B38-546F-4F84-BF6C-6F15C376CC7C}.Release|Win32.Build.0 = Release|Win32
+		{A6281E07-4773-4D85-A026-1D708BEBB644}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A6281E07-4773-4D85-A026-1D708BEBB644}.Debug|Win32.Build.0 = Debug|Win32
+		{A6281E07-4773-4D85-A026-1D708BEBB644}.Release|Win32.ActiveCfg = Release|Win32
+		{A6281E07-4773-4D85-A026-1D708BEBB644}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
