@@ -1,0 +1,1 @@
+The latest PulseWaves version is 0.3 (revision 8) and a DLL for writing and reading is available (including sample programs). The PulseTools folder also contains the first three PULSEtools pulseinfo.exe, pulseview.exe, and pulse2pulse.exe can parse various full waveform LiDAR formats (e.g. LVIS, LAS 1.3 FWF, GeoLas Waveform, Optech CSD).
