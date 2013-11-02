@@ -719,6 +719,392 @@ PULSEscanner::PULSEscanner()
   size = size_of_attributes();
 }
 
+/************************************************/
+/************************************************/
+/************************************************/
+
+U32 PULSElookupTable::size_of_attributes() const
+{
+  U32 size = (3*4) + (1*2) + (2*1) + (1*PULSEWAVES_DESCRIPTION_SIZE);
+  return size;
+}
+
+BOOL PULSElookupTable::load(ByteStreamIn* stream)
+{
+  if (stream == 0)
+  {
+    fprintf(stderr,"ERROR: stream pointer is zero\n");
+    return FALSE;
+  }
+
+  if (number_entries)
+  {
+    delete [] entries;
+    number_entries = 0;
+  }
+
+  try { stream->get32bitsLE((U8*)&size); } catch(...)
+  {
+    fprintf(stderr,"ERROR: reading size\n");
+    return FALSE;
+  }
+
+  U32 size = size_of_attributes(); 
+
+  if (size != this->size)
+  {
+    fprintf(stderr,"WARNING: size of PULSElookupTable should be %u but is %u\n", size, this->size);
+  }
+
+  try { stream->get32bitsLE((U8*)&reserved); } catch(...)
+  {
+    fprintf(stderr,"ERROR: reading reserved\n");
+    return FALSE;
+  }
+
+  U32 reserved = 0;
+
+  if (reserved != this->reserved)
+  {
+    fprintf(stderr,"WARNING: reserved of PULSElookupTable is %u instead of %u\n", this->reserved, reserved);
+  }
+
+  try { stream->get32bitsLE((U8*)&number_entries); } catch(...)
+  {
+    fprintf(stderr,"ERROR: reading number_entries\n");
+    return FALSE;
+  }
+
+  try { stream->get16bitsLE((U8*)&unit_of_measurement); } catch(...)
+  {
+    fprintf(stderr,"ERROR: reading unit_of_measurement\n");
+    return FALSE;
+  }
+
+  try { stream->getBytes((U8*)&data_type, 1); } catch(...)
+  {
+    fprintf(stderr,"ERROR: reading data_type\n");
+    return FALSE;
+  }
+
+  if (data_type != 8)
+  {
+    fprintf(stderr,"ERROR: data_type %d not supported. only float (8) is supported.\n", data_type);
+    return FALSE;
+  }
+
+  try { stream->getBytes((U8*)&options, 1); } catch(...)
+  {
+    fprintf(stderr,"ERROR: reading options\n");
+    return FALSE;
+  }
+
+  try { stream->getBytes((U8*)description, PULSEWAVES_DESCRIPTION_SIZE); } catch(...)
+  {
+    fprintf(stderr,"ERROR: reading description\n");
+    return FALSE;
+  }
+
+  entries = new U8[number_entries*sizeof(F32)];
+  if (entries == 0)
+  {
+    fprintf(stderr,"ERROR: allocating %u entries\n", number_entries);
+    return FALSE;
+  }
+
+  U32 e;
+  for (e = 0; e < number_entries; e++)
+  {
+    try { stream->get32bitsLE(entries+e*sizeof(F32)); } catch(...)
+    {
+      fprintf(stderr,"ERROR: reading entry %u\n", e);
+      return FALSE;
+    }
+  }
+
+  return TRUE;
+}
+
+BOOL PULSElookupTable::save(ByteStreamOut* stream) const
+{
+  if (stream == 0)
+  {
+    fprintf(stderr,"ERROR: stream pointer is zero\n");
+    return FALSE;
+  }
+
+  U32 size = size_of_attributes(); 
+
+  if (size != this->size)
+  {
+    fprintf(stderr,"WARNING: size of PULSElookupTable should be %u but is %u. ignoring %u ...\n", size, this->size, this->size);
+  }
+
+  try { stream->put32bitsLE((U8*)&size); } catch(...)
+  {
+    fprintf(stderr,"ERROR: writing size\n");
+    return FALSE;
+  }
+
+  U32 reserved = 0;
+
+  if (reserved != this->reserved)
+  {
+    fprintf(stderr,"WARNING: reserved of PULSElookupTable should be %u but is %u. ignoring %u ...\n", reserved, this->reserved, this->reserved);
+  }
+
+  try { stream->put32bitsLE((U8*)&reserved); } catch(...)
+  {
+    fprintf(stderr,"ERROR: writing reserved\n");
+    return FALSE;
+  }
+
+  try { stream->put32bitsLE((U8*)&number_entries); } catch(...)
+  {
+    fprintf(stderr,"ERROR: writing number_entries\n");
+    return FALSE;
+  }
+
+  try { stream->put16bitsLE((U8*)&unit_of_measurement); } catch(...)
+  {
+    fprintf(stderr,"ERROR: writing unit_of_measurement\n");
+    return FALSE;
+  }
+
+  if (data_type != 8)
+  {
+    fprintf(stderr,"ERROR: data_type %d not supported. only float (8) is supported.\n", data_type);
+    return FALSE;
+  }
+
+  try { stream->putBytes((U8*)&data_type, 1); } catch(...)
+  {
+    fprintf(stderr,"ERROR: writing data_type\n");
+    return FALSE;
+  }
+
+  try { stream->putBytes((U8*)&options, 1); } catch(...)
+  {
+    fprintf(stderr,"ERROR: writing options\n");
+    return FALSE;
+  }
+
+  try { stream->putBytes((U8*)description, PULSEWAVES_DESCRIPTION_SIZE); } catch(...)
+  {
+    fprintf(stderr,"ERROR: writing description\n");
+    return FALSE;
+  }
+
+  U32 e;
+  for (e = 0; e < number_entries; e++)
+  {
+    try { stream->put32bitsLE(entries+e*sizeof(F32)); } catch(...)
+    {
+      fprintf(stderr,"ERROR: writing entry %u\n", e);
+      return FALSE;
+    }
+  }
+
+  return TRUE;
+}
+
+BOOL PULSElookupTable::save_to_txt(FILE* file) const
+{
+  return TRUE;
+}
+
+PULSElookupTable::PULSElookupTable()
+{
+  memset(this, 0, sizeof(PULSElookupTable));
+  size = size_of_attributes();
+}
+
+PULSElookupTable::~PULSElookupTable()
+{
+  if (number_entries)
+  {
+    delete [] entries;
+  }
+}
+
+/************************************************/
+/************************************************/
+/************************************************/
+
+U32 PULSEtable::size_of_attributes() const
+{
+  U32 size = (3*4) + (1*PULSEWAVES_DESCRIPTION_SIZE);
+  return size;
+}
+
+BOOL PULSEtable::load(ByteStreamIn* stream)
+{
+  if (stream == 0)
+  {
+    fprintf(stderr,"ERROR: stream pointer is zero\n");
+    return FALSE;
+  }
+
+  if (number_tables)
+  {
+    U32 t;
+    for (t = 0; t < number_tables; t++)
+    {
+      delete tables[t];
+    }
+    delete [] tables;
+    number_tables = 0;
+  }
+
+  try { stream->get32bitsLE((U8*)&size); } catch(...)
+  {
+    fprintf(stderr,"ERROR: reading size\n");
+    return FALSE;
+  }
+
+  U32 size = size_of_attributes(); 
+
+  if (size != this->size)
+  {
+    fprintf(stderr,"WARNING: size of PULSEtable should be %u but is %u\n", size, this->size);
+  }
+
+  try { stream->get32bitsLE((U8*)&reserved); } catch(...)
+  {
+    fprintf(stderr,"ERROR: reading reserved\n");
+    return FALSE;
+  }
+
+  U32 reserved = 0;
+
+  if (reserved != this->reserved)
+  {
+    fprintf(stderr,"WARNING: reserved of PULSEtable is %u instead of %u\n", this->reserved, reserved);
+  }
+
+  try { stream->get32bitsLE((U8*)&number_tables); } catch(...)
+  {
+    fprintf(stderr,"ERROR: reading number_tables\n");
+    return FALSE;
+  }
+
+  try { stream->getBytes((U8*)description, PULSEWAVES_DESCRIPTION_SIZE); } catch(...)
+  {
+    fprintf(stderr,"ERROR: reading description\n");
+    return FALSE;
+  }
+
+  if (number_tables)
+  {
+    tables = new PULSElookupTable*[number_tables];
+    if (tables == 0)
+    {
+      fprintf(stderr,"ERROR: allocating %u lookup table pointers\n", number_tables);
+      return FALSE;
+    }
+    U32 t;
+    for (t = 0; t < number_tables; t++)
+    {
+      tables[t] = new PULSElookupTable();
+      if (tables[t] == 0)
+      {
+        fprintf(stderr,"ERROR: allocating lookup table %u\n", t);
+        return FALSE;
+      }
+      if (!(tables[t]->load(stream)))
+      {
+        fprintf(stderr,"ERROR: reading lookup table %u\n", t);
+        return FALSE;
+      }
+    }
+  }
+
+  return TRUE;
+}
+
+BOOL PULSEtable::save(ByteStreamOut* stream) const
+{
+  if (stream == 0)
+  {
+    fprintf(stderr,"ERROR: stream pointer is zero\n");
+    return FALSE;
+  }
+
+  U32 size = size_of_attributes(); 
+
+  if (size != this->size)
+  {
+    fprintf(stderr,"WARNING: size of PULSEtable should be %u but is %u. ignoring %u ...\n", size, this->size, this->size);
+  }
+
+  try { stream->put32bitsLE((U8*)&size); } catch(...)
+  {
+    fprintf(stderr,"ERROR: writing size\n");
+    return FALSE;
+  }
+
+  U32 reserved = 0;
+
+  if (reserved != this->reserved)
+  {
+    fprintf(stderr,"WARNING: reserved of PULSEtable should be %u but is %u. ignoring %u ...\n", reserved, this->reserved, this->reserved);
+  }
+
+  try { stream->put32bitsLE((U8*)&reserved); } catch(...)
+  {
+    fprintf(stderr,"ERROR: writing reserved\n");
+    return FALSE;
+  }
+
+  try { stream->put32bitsLE((U8*)&number_tables); } catch(...)
+  {
+    fprintf(stderr,"ERROR: writing number_tables\n");
+    return FALSE;
+  }
+
+  try { stream->putBytes((U8*)description, PULSEWAVES_DESCRIPTION_SIZE); } catch(...)
+  {
+    fprintf(stderr,"ERROR: writing description\n");
+    return FALSE;
+  }
+
+  U32 t;
+  for (t = 0; t < number_tables; t++)
+  {
+    if (!(tables[t]->save(stream)))
+    {
+      fprintf(stderr,"ERROR: writing lookup table %u\n", t);
+      return FALSE;
+    }
+  }
+
+  return TRUE;
+}
+
+BOOL PULSEtable::save_to_txt(FILE* file) const
+{
+  return TRUE;
+}
+
+PULSEtable::PULSEtable()
+{
+  memset(this, 0, sizeof(PULSEtable));
+  size = size_of_attributes();
+}
+
+PULSEtable::~PULSEtable()
+{
+  if (number_tables)
+  {
+    U32 t;
+    for (t = 0; t < number_tables; t++)
+    {
+      delete tables[t];
+    }
+    delete [] tables;
+  }
+}
+
 /*
   // write pulsezip VLR with compression parameters
 

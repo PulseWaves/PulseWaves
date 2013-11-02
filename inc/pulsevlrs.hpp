@@ -118,6 +118,63 @@ public:
   PULSEscanner();
 };
 
+class PULSElookupTable
+{
+public:
+  // start of attributes
+  U32 size;                           // byte-aligned size from start to end of attributes (including the PULSEWAVES_DESCRIPTION_SIZE bytes for description)
+  U32 reserved; 
+  U32 number_entries;
+  U16 unit_of_measurement;
+  U8 data_type;             
+  U8 options;
+  // space for new attributes
+  // ...
+  // space for new attributes
+  CHAR description[PULSEWAVES_DESCRIPTION_SIZE];
+  // end of attributes
+
+  U32 size_of_attributes() const;
+
+  // the actual table entries
+  U8* entries;
+
+  // for serializing
+  BOOL load(ByteStreamIn* stream);
+  BOOL save(ByteStreamOut* stream) const;
+  BOOL save_to_txt(FILE* file) const;
+
+  PULSElookupTable();
+  ~PULSElookupTable();
+};
+
+class PULSEtable
+{
+public:
+  // start of attributes
+  U32 size;                           // byte-aligned size from start to end of attributes (including the PULSEWAVES_DESCRIPTION_SIZE bytes for description)
+  U32 reserved; 
+  U32 number_tables;
+  // space for new attributes
+  // ...
+  // space for new attributes
+  CHAR description[PULSEWAVES_DESCRIPTION_SIZE];
+  // end of attributes
+
+  U32 size_of_attributes() const;
+
+  // an array of pointers to actual lookup tables
+  PULSElookupTable** tables;
+
+  // for serializing
+  BOOL load(ByteStreamIn* stream);
+  BOOL save(ByteStreamOut* stream) const;
+  BOOL save_to_txt(FILE* file) const;
+
+  PULSEtable();
+  ~PULSEtable();
+};
+
 class PULSEgeokeys
 {
 public:

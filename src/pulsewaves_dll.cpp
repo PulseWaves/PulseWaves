@@ -203,7 +203,7 @@ pulsewaves_header_get(
   {
     if (header == 0)
     {
-      sprintf(pulsewaves->error, "pulsewaves_header_struct pointer is zero");
+      sprintf(pulsewaves->error, "header pointer is zero");
       return 1;
     }
 
@@ -271,7 +271,7 @@ pulsewaves_header_set(
   {
     if (header == 0)
     {
-      sprintf(pulsewaves->error, "pulsewaves_header_struct pointer is zero");
+      sprintf(pulsewaves->error, "header pointer is zero");
       return 1;
     }
     
@@ -335,7 +335,7 @@ pulsewaves_header_get_scanner(
   {
     if (scanner == 0)
     {
-      sprintf(pulsewaves->error, "pulsewaves_scanner_struct pointer is zero");
+      sprintf(pulsewaves->error, "scanner pointer is zero");
       return 1;
     }
 
@@ -396,7 +396,7 @@ pulsewaves_header_add_scanner(
   {
     if (scanner == 0)
     {
-      sprintf(pulsewaves->error, "pulsewaves_scanner_struct pointer is zero");
+      sprintf(pulsewaves->error, "scanner pointer is zero");
       return 1;
     }
 
@@ -438,6 +438,158 @@ pulsewaves_header_add_scanner(
   catch (...)
   {
     sprintf(pulsewaves->error, "internal error in pulsewaves_header_add_scanner %u", scanner_index);
+    return 1;
+  }
+
+  pulsewaves->error[0] = '\0';
+  return 0;
+}
+
+/*---------------------------------------------------------------------------*/
+PULSEWAVES_API pulsewaves_I32
+pulsewaves_header_get_lookup_tables(
+    pulsewaves_POINTER                 pointer
+    , pulsewaves_U32*                  number
+    , pulsewaves_lookup_table_struct** lookup_tables
+    , pulsewaves_U32                   table_index
+)
+{
+  if (pointer == 0) return 1;
+  pulsewaves_struct* pulsewaves = (pulsewaves_struct*)pointer;
+
+  try
+  {
+    if (lookup_tables == 0)
+    {
+      sprintf(pulsewaves->error, "lookup_tables pointer is zero");
+      return 1;
+    }
+
+    if (table_index > PULSEWAVES_TABLE_MAX)
+    {
+      sprintf(pulsewaves->error, "table_index %u outside of valid range from %u to %u", table_index, 0, PULSEWAVES_TABLE_MAX);
+      return 1;
+    }
+
+    PULSEtable table;
+    if (table_index > 0)
+    {
+      if (!pulsewaves->reader.header.get_table(&table, table_index))
+      {
+        *number = 0;
+        *lookup_tables = 0;
+        return 0;
+      }
+    }
+    *number = table.number_tables;
+    if (table.number_tables)
+    {
+      *lookup_tables = (pulsewaves_lookup_table*)malloc(sizeof(pulsewaves_lookup_table)*table.number_tables);
+      if (*lookup_tables == 0)
+      {
+        sprintf(pulsewaves->error, "allocating memory for %u table(s) for table_index %u", table.number_tables, table_index);
+        return 1;
+      }
+      U32 t;
+      for (t = 0; t < table.number_tables; t++)
+      {
+        (*lookup_tables)[t].number_entries = table.tables[t]->number_entries;
+        (*lookup_tables)[t].unit_of_measurement = table.tables[t]->unit_of_measurement;
+        (*lookup_tables)[t].data_type = table.tables[t]->data_type;
+//        (*lookup_tables)[t]->
+      }
+    }
+  }
+  catch (...)
+  {
+    sprintf(pulsewaves->error, "internal error in pulsewaves_header_get_tables %u", table_index);
+    return 1;
+  }
+
+  pulsewaves->error[0] = '\0';
+  return 0;
+}
+
+/*---------------------------------------------------------------------------*/
+PULSEWAVES_API pulsewaves_I32
+pulsewaves_header_add_lookup_tables(
+    pulsewaves_POINTER                     pointer
+    , pulsewaves_U32                       number
+    , pulsewaves_lookup_table_struct*      lookup_tables
+    , pulsewaves_U32                       table_index
+)
+{
+  if (pointer == 0) return 1;
+  pulsewaves_struct* pulsewaves = (pulsewaves_struct*)pointer;
+
+  try
+  {
+    if (lookup_tables == 0)
+    {
+      sprintf(pulsewaves->error, "lookup_tables pointer is zero");
+      return 1;
+    }
+
+    if (pulsewaves->is_writing)
+    {
+      sprintf(pulsewaves->error, "cannot add lookup tables after pulsewaves_writer was opened");
+      return 1;
+    }
+
+    if ((table_index < PULSEWAVES_TABLE_MIN) || (PULSEWAVES_TABLE_MAX < table_index))
+    {
+      sprintf(pulsewaves->error, "table_index %u outside of valid range from %u to %u", table_index, PULSEWAVES_TABLE_MIN, PULSEWAVES_TABLE_MAX);
+      return 1;
+    }
+
+    PULSEtable table;
+    table.number_tables = number;
+
+    if (number)
+    {
+      table.tables = new PULSElookupTable*[number];
+      if (table.tables == 0)
+      {
+        sprintf(pulsewaves->error, "allocating memory for %u PULSElookupTable pointer(s) for table_index %u", table.number_tables, table_index);
+        return 1;
+      }
+
+      U32 t;
+      for (t = 0; t < number; t++)
+      {
+        table.tables[t] = new PULSElookupTable;
+        if (table.tables[t] == 0)
+        {
+          sprintf(pulsewaves->error, "allocating memory for PULSElookupTable %u for table_index %u", t, table_index);
+          return 1;
+        }
+        table.tables[t]->number_entries = lookup_tables[t].number_entries;
+        table.tables[t]->unit_of_measurement = lookup_tables[t].unit_of_measurement;
+        table.tables[t]->data_type = 8;
+        strncpy(table.tables[t]->description, lookup_tables[t].description, PULSEWAVES_DESCRIPTION_SIZE);
+        if (lookup_tables[t].number_entries)
+        {
+          table.tables[t]->entries = new U8[sizeof(F32)*lookup_tables[t].number_entries];
+          if (table.tables[t]->entries == 0)
+          {
+            sprintf(pulsewaves->error, "allocating memory for %u entries for PULSElookupTable %u of table_index %u", lookup_tables[t].number_entries, t, table_index);
+            return 1;
+          }
+          memcpy(table.tables[t]->entries, lookup_tables[t].entries, sizeof(F32)*lookup_tables[t].number_entries);
+        }
+      }
+    }
+    sprintf(table.description, "PulseWaves DLL %d.%d r%d (%d) by rapidlasso", PULSEWAVES_VERSION_MAJOR, PULSEWAVES_VERSION_MINOR, PULSEWAVES_REVISION, PULSEWAVES_BUILD_DATE);
+
+    if (!pulsewaves->header.add_table(&table, table_index))
+    {
+      sprintf(pulsewaves->error, "adding lookup tables with table_index %u to header", table_index);
+      return 1;
+    }
+  }
+  catch (...)
+  {
+    sprintf(pulsewaves->error, "internal error in pulsewaves_header_add_tables %u", table_index);
     return 1;
   }
 
@@ -754,7 +906,7 @@ pulsewaves_header_set_geokey_entries(
   {
     if (number == 0)
     {
-      sprintf(pulsewaves->error, "number of keyentries is zero");
+      sprintf(pulsewaves->error, "number of key_entries is zero");
       return 1;
     }
 
@@ -807,7 +959,7 @@ pulsewaves_header_get_geokey_entries(
 
     if (key_entries == 0)
     {
-      sprintf(pulsewaves->error, "pointer to keyentries pointer is zero");
+      sprintf(pulsewaves->error, "pointer to key_entries pointer is zero");
       return 1;
     }
 
@@ -1192,7 +1344,7 @@ pulsewaves_writer_write_pulse(
   {
     if (pulse == 0)
     {
-      sprintf(pulsewaves->error, "pulsewaves_pulse_struct pointer is zero");
+      sprintf(pulsewaves->error, "pulse pointer is zero");
       return 1;
     }
 
@@ -1268,7 +1420,7 @@ pulsewaves_writer_write_waves(
   {
     if (wavessamplings == 0)
     {
-      sprintf(pulsewaves->error, "pulsewaves_wavessampling_struct pointer is zero");
+      sprintf(pulsewaves->error, "wavessamplings pointer is zero");
       return 1;
     }
 
@@ -1318,12 +1470,12 @@ pulsewaves_writer_write_waves(
       return 1;
     }
 
-    for (U32 m = 0; m < number_of_wavessamplings; m++)
+    for (I32 m = 0; m < number_of_wavessamplings; m++)
     {
       WAVESsampling* sampling = waves->get_sampling(m);
       if (!sampling->set_number_of_segments(wavessamplings[m].num_segments))
       {
-        sprintf(pulsewaves->error, "number of segments of sampling %u should be %d not %d according to pulsedescriptor with index %d", m, sampling->get_number_of_segments(), wavessamplings[m].num_segments, pulsewaves->descriptor_index);
+        sprintf(pulsewaves->error, "number of segments of sampling %d should be %d not %d according to pulsedescriptor with index %d", m, sampling->get_number_of_segments(), wavessamplings[m].num_segments, pulsewaves->descriptor_index);
         return 1;
       }
       for (I32 s = 0; s < wavessamplings[m].num_segments; s++)
@@ -1331,14 +1483,14 @@ pulsewaves_writer_write_waves(
         sampling->set_active_segment(s);
         if (!sampling->set_number_of_samples_for_segment(wavessamplings[m].num_samples[s]))
         {
-          sprintf(pulsewaves->error, "number of samples of segment %d of sampling %u should be %d not %d according to pulsedescriptor with index %d", s, m, sampling->get_number_of_samples_for_segment(), wavessamplings[m].num_samples[s], pulsewaves->descriptor_index);
+          sprintf(pulsewaves->error, "number of samples of segment %d of sampling %d should be %d not %d according to pulsedescriptor with index %d", s, m, sampling->get_number_of_samples_for_segment(), wavessamplings[m].num_samples[s], pulsewaves->descriptor_index);
           return 1;
         }
         if (sampling->get_bits_for_duration_from_anchor())
         {
           if (!sampling->set_duration_from_anchor_for_segment(wavessamplings[m].durations[s]))
           {
-            sprintf(pulsewaves->error, "duration %g of segment %d of sampling %u could not be set for pulsedescriptor with index %d because quantized duration (after subtracting offset_for_duration_from_anchor and dividing by scale_for_duration_from_anchor) does not fit into bits_for_duration_from_anchor", wavessamplings[m].durations[s], s, m, pulsewaves->descriptor_index);
+            sprintf(pulsewaves->error, "duration %g of segment %d of sampling %d could not be set for pulsedescriptor with index %d because quantized duration (after subtracting offset_for_duration_from_anchor and dividing by scale_for_duration_from_anchor) does not fit into bits_for_duration_from_anchor", wavessamplings[m].durations[s], s, m, pulsewaves->descriptor_index);
             return 1;
           }
         }
@@ -1376,7 +1528,7 @@ pulsewaves_writer_close(
   {
     if (!pulsewaves->writer.update_header(&pulsewaves->header, TRUE))
     {
-      sprintf(pulsewaves->error, "updating header before closing");
+      sprintf(pulsewaves->error, "updating header during close of writer");
       return 1;
     }
 

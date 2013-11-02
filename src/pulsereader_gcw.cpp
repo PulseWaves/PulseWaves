@@ -502,11 +502,11 @@ BOOL PULSEreaderGCW::open()
   samplings[0].bits_for_number_of_samples = 16;              // the number of samples per segment is specified per segment with 16 bits
   samplings[0].number_of_segments = 1;                       // the number of segments per sampling is always 1
   samplings[0].number_of_samples = 0;                        // the number of samples per segment varies
-  samplings[0].bits_per_sample = 16;                         // the number of bits per sample is always 16
+  samplings[0].bits_per_sample = 8;                          // the number of bits per sample is always 8
   samplings[0].lookup_table_index = PULSEWAVES_UNDEFINED;    // the index to the optional lookup table translating sample values to physical measurements
   samplings[0].sample_units = 1.0f;                          // [nanoseconds]
   samplings[0].compression = PULSEWAVES_UNCOMPRESSED;        // the samples are stored without compression
-  strncpy(samplings[0].description, "outgoing at 16 bits", PULSEWAVES_DESCRIPTION_SIZE);
+  strncpy(samplings[0].description, "outgoing at 8 bits", PULSEWAVES_DESCRIPTION_SIZE);
 
   samplings[1].type = PULSEWAVES_RETURNING;
   samplings[1].channel = 0;
@@ -685,12 +685,12 @@ BOOL PULSEreaderGCW::read_waves()
     // request memory outgoing waveform
     if (!waves16bit.get_sampling(0)->set_number_of_samples_for_segment(pulselgc.strtwflen))
     {
-      fprintf(stderr,"ERROR: setting number of outgoing 16 bit samples to %d\n", pulselgc.strtwflen);
+      fprintf(stderr,"ERROR: setting number of outgoing 8 bit samples to %d\n", pulselgc.strtwflen);
     }
     // read outgoing waveform
-    try { waves_stream->getBytes(waves16bit.get_sampling(0)->get_samples(), pulselgc.strtwflen*2); } catch(...)
+    try { waves_stream->getBytes(waves16bit.get_sampling(0)->get_samples(), pulselgc.strtwflen); } catch(...)
     {
-      fprintf(stderr,"ERROR: reading samplings[0] of %d outgoing 16 bit samples\n", pulselgc.strtwflen);
+      fprintf(stderr,"ERROR: reading samplings[0] of %d outgoing 8 bit samples\n", pulselgc.strtwflen);
       return FALSE;
     }
     // set duration of returning waveform

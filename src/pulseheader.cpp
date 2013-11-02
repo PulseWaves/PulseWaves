@@ -657,6 +657,77 @@ BOOL PULSEheader::get_scanner(PULSEscanner* scanner, U32 scanner_index) const
   return FALSE;
 }
 
+BOOL PULSEheader::add_table(const PULSEtable* table, U32 table_index, BOOL add_to_vlrs)
+{
+  if (num_tables < table_index)
+  {
+    if (num_tables)
+    {
+      tables = (PULSEtable**)realloc(tables, table_index*sizeof(PULSEtable*));
+    }
+    else
+    {
+      tables = (PULSEtable**)malloc(table_index*sizeof(PULSEtable*));
+    }
+    if (tables == 0)
+    {
+      fprintf(stderr,"ERROR: allocating memory for %u PULSEtable*\n", table_index);
+      return FALSE;
+    }
+    memset(&(tables[num_tables]), 0, (table_index-num_tables)*sizeof(PULSEtable*));
+    num_tables = table_index;
+  }
+  if (tables[table_index-1] == 0)
+  {
+    tables[table_index-1] = (PULSEtable*)malloc(sizeof(PULSEtable));
+    if (tables[table_index-1] == 0)
+    {
+      fprintf(stderr,"ERROR: allocating memory for PULSEtable %u\n", table_index);
+      return FALSE;
+    }
+  }
+  *(tables[table_index-1]) = *table;
+
+  if (add_to_vlrs)
+  {
+    ByteStreamOutArray* bytestreamoutarray;
+
+    if (IS_LITTLE_ENDIAN())
+      bytestreamoutarray = new ByteStreamOutArrayLE();
+    else
+      bytestreamoutarray = new ByteStreamOutArrayBE();
+
+    if (bytestreamoutarray == 0)
+    {
+      fprintf(stderr,"ERROR: allocating memory for bytestreamoutarray of PULSEtable %u\n", table_index);
+      return FALSE;
+    }
+
+    if (!tables[table_index-1]->save(bytestreamoutarray))
+    {
+      fprintf(stderr,"ERROR: saving PULSEtable %u in or bytestreamoutarray\n", table_index);
+      return FALSE;
+    }
+
+    BOOL success = add_vlr("PulseWaves_Spec", PULSEWAVES_TABLE_RECORD_ID+table_index, bytestreamoutarray->getSize(), bytestreamoutarray->getData());
+    delete bytestreamoutarray;
+    return success;
+  }
+
+  return TRUE;
+}
+
+BOOL PULSEheader::get_table(PULSEtable* table, U32 table_index) const
+{
+  if (table_index && (table_index <= num_tables))
+  {
+    *table = *(tables[table_index-1]);
+    return TRUE;
+  }
+  *table = PULSEtable();
+  return FALSE;
+}
+
 BOOL PULSEheader::add_descriptor(const PULSEcomposition* composition, const PULSEsampling* samplings, U32 descriptor_index, BOOL add_to_vlrs)
 {
   if (composition == 0)
