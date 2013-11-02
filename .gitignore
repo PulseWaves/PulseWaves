@@ -1,3 +1,5 @@
 exampleLIB
 *.a
 *.o
+*.suo
+*.sdf
