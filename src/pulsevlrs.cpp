@@ -725,7 +725,7 @@ PULSEscanner::PULSEscanner()
 
 U32 PULSElookupTable::size_of_attributes() const
 {
-  U32 size = (3*4) + (1*2) + (2*1) + (1*PULSEWAVES_DESCRIPTION_SIZE);
+  U32 size = (3*4) + (1*2) + (2*1) + (1*4) + (1*PULSEWAVES_DESCRIPTION_SIZE);
   return size;
 }
 
@@ -796,6 +796,12 @@ BOOL PULSElookupTable::load(ByteStreamIn* stream)
   try { stream->getBytes((U8*)&options, 1); } catch(...)
   {
     fprintf(stderr,"ERROR: reading options\n");
+    return FALSE;
+  }
+
+  try { stream->get32bitsLE((U8*)&compression); } catch(...)
+  {
+    fprintf(stderr,"ERROR: reading compression\n");
     return FALSE;
   }
 
@@ -886,6 +892,12 @@ BOOL PULSElookupTable::save(ByteStreamOut* stream) const
   try { stream->putBytes((U8*)&options, 1); } catch(...)
   {
     fprintf(stderr,"ERROR: writing options\n");
+    return FALSE;
+  }
+
+  try { stream->put32bitsLE((U8*)&compression); } catch(...)
+  {
+    fprintf(stderr,"ERROR: writing compression\n");
     return FALSE;
   }
 

@@ -900,7 +900,7 @@ U32 PULSEheader::find_descriptor(const PULSEcomposition* composition, const PULS
       {
         if (descriptors[u]->is_equal(composition, samplings))
         {
-          return u+1;
+          return u;
         }
       }
     }

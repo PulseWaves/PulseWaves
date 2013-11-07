@@ -128,6 +128,7 @@ public:
   U16 unit_of_measurement;
   U8 data_type;             
   U8 options;
+  U32 compression;
   // space for new attributes
   // ...
   // space for new attributes

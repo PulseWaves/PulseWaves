@@ -1,7 +1,7 @@
 /*
 ===============================================================================
 
-  FILE:  pulsedescriptor.cpp
+  FILE:  waveswaves.cpp
   
   CONTENTS:
   
