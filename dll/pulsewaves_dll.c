@@ -211,6 +211,56 @@ pulsewaves_header_add_scanner
 };
 
 /*---------------------------------------------------------------------------*/
+typedef pulsewaves_I32 (*pulsewaves_header_get_lookup_tables_def)
+(
+    pulsewaves_POINTER                     pointer
+    , pulsewaves_U32*                      number
+    , pulsewaves_lookup_table_struct**     lookup_tables
+    , pulsewaves_U32                       table_index
+);
+pulsewaves_header_get_lookup_tables_def pulsewaves_header_get_lookup_tables_ptr = 0;
+PULSEWAVES_API pulsewaves_I32
+pulsewaves_header_get_lookup_tables
+(
+    pulsewaves_POINTER                     pointer
+    , pulsewaves_U32*                      number
+    , pulsewaves_lookup_table_struct**     lookup_tables
+    , pulsewaves_U32                       table_index
+)
+{
+  if (pulsewaves_header_get_lookup_tables_ptr)
+  {
+    return (*pulsewaves_header_get_lookup_tables_ptr)(pointer, number, lookup_tables, table_index);
+  }
+  return 1;
+};
+
+/*---------------------------------------------------------------------------*/
+typedef pulsewaves_I32 (*pulsewaves_header_add_lookup_tables_def)
+(
+    pulsewaves_POINTER                     pointer
+    , pulsewaves_U32                       number
+    , pulsewaves_lookup_table_struct*      lookup_tables
+    , pulsewaves_U32                       table_index
+);
+pulsewaves_header_add_lookup_tables_def pulsewaves_header_add_lookup_tables_ptr = 0;
+PULSEWAVES_API pulsewaves_I32
+pulsewaves_header_add_lookup_tables
+(
+    pulsewaves_POINTER                     pointer
+    , pulsewaves_U32                       number
+    , pulsewaves_lookup_table_struct*      lookup_tables
+    , pulsewaves_U32                       table_index
+)
+{
+  if (pulsewaves_header_add_lookup_tables_ptr)
+  {
+    return (*pulsewaves_header_add_lookup_tables_ptr)(pointer, number, lookup_tables, table_index);
+  }
+  return 1;
+};
+
+/*---------------------------------------------------------------------------*/
 typedef pulsewaves_I32 (*pulsewaves_header_get_pulsedescriptor_def)
 (
     pulsewaves_POINTER                     pointer
@@ -684,6 +734,16 @@ pulsewaves_I32 pulsewaves_load_dll()
   }
   pulsewaves_header_add_scanner_ptr = (pulsewaves_header_add_scanner_def)GetProcAddress(hinstLib, "pulsewaves_header_add_scanner");
   if (pulsewaves_header_add_scanner_ptr == NULL) {
+     FreeLibrary(hinstLib);
+     return 1;
+  }
+  pulsewaves_header_get_lookup_tables_ptr = (pulsewaves_header_get_lookup_tables_def)GetProcAddress(hinstLib, "pulsewaves_header_get_lookup_tables");
+  if (pulsewaves_header_get_lookup_tables_ptr == NULL) {
+     FreeLibrary(hinstLib);
+     return 1;
+  }
+  pulsewaves_header_add_lookup_tables_ptr = (pulsewaves_header_add_lookup_tables_def)GetProcAddress(hinstLib, "pulsewaves_header_add_lookup_tables");
+  if (pulsewaves_header_add_lookup_tables_ptr == NULL) {
      FreeLibrary(hinstLib);
      return 1;
   }

@@ -56,7 +56,7 @@ public:
   U16 number_of_segments;
   U32 number_of_samples;
   U16 bits_per_sample;                         // 8 or 16
-  U16 lookup_table_index;                      // must be zero (for now)
+  U16 lookup_table_index;                      // index of 1 or higher to PULSEtable stored in VLR/AVLR, 0 means no lookup table. 
   F32 sample_units;                            // [nanoseconds]
   U32 compression;                             // must be zero
   // space for new attributes

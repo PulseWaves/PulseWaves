@@ -13,7 +13,7 @@
   
   COPYRIGHT:
   
-    (c) 2007-2013, martin isenburg, rapidlasso - tools to catch reality
+    (c) 2007-2013, martin isenburg, rapidlasso - fast tools to catch reality
 
     This is free software; you can redistribute and/or modify it under the
     terms of the GNU Lesser General Licence as published by the Free Software
@@ -24,6 +24,7 @@
   
   CHANGE HISTORY:
   
+    31 October 2013 - on flight from Denpasar to Bangkok adding lookup tables
     29 October 2012 - on train from Adelaide to Parafield adding read stubs
      5 September 2012 - at RIEGL headquarters to get PulseWaves into RiProcess
   
@@ -32,6 +33,8 @@
 
 #ifndef PULSEWAVES_DLL_H
 #define PULSEWAVES_DLL_H
+
+#include <math.h>
 
 #ifdef _WIN32
 #   ifdef PULSEWAVES_DYN_LINK
@@ -87,6 +90,12 @@ typedef void*              pulsewaves_POINTER;
 #define PULSEWAVESDLL_PULSE_FORMAT_0_SIZE                         48
 #define PULSEWAVESDLL_PULSE_ATTRIBUTES_PULSE_SOURCE_ID_16BIT_SIZE 2
 #define PULSEWAVESDLL_PULSE_ATTRIBUTES_PULSE_SOURCE_ID_32BIT_SIZE 4
+
+#define PULSEWAVESDLL_EMPTY_TABLE_ENTRY           -2.0e+37f
+
+#define PULSEWAVESDLL_TABLE_UNDEFINED             0
+#define PULSEWAVESDLL_TABLE_INTENSITY_CORRECTION  1
+#define PULSEWAVESDLL_TABLE_RANGE_CORRECTION      2
 
 typedef struct pulsewaves_header
 {
@@ -149,6 +158,16 @@ typedef struct pulsewaves_scanner
   pulsewaves_F32 maximal_range;                  // [meters]
   pulsewaves_CHAR description[PULSEWAVESDLL_DESCRIPTION_SIZE];
 } pulsewaves_scanner_struct;
+
+typedef struct pulsewaves_lookup_table
+{
+  pulsewaves_U32 number_entries;                 
+  pulsewaves_U16 unit_of_measurement;            // 0 = undefined
+  pulsewaves_U8  data_type;                      // must be float (8)
+  pulsewaves_U8  options;                        // must be 0
+  pulsewaves_CHAR description[PULSEWAVESDLL_DESCRIPTION_SIZE];
+  pulsewaves_U8* entries;
+} pulsewaves_lookup_table_struct;
 
 typedef struct pulsewaves_pulsecomposition
 {
@@ -297,6 +316,24 @@ pulsewaves_header_add_scanner(
 
 /*---------------------------------------------------------------------------*/
 PULSEWAVES_API pulsewaves_I32
+pulsewaves_header_get_lookup_tables(
+    pulsewaves_POINTER                     pointer
+    , pulsewaves_U32*                      number
+    , pulsewaves_lookup_table_struct**     tables
+    , pulsewaves_U32                       lookup_tables_index
+);
+
+/*---------------------------------------------------------------------------*/
+PULSEWAVES_API pulsewaves_I32
+pulsewaves_header_add_lookup_tables(
+    pulsewaves_POINTER                     pointer
+    , pulsewaves_U32                       number
+    , pulsewaves_lookup_table_struct*      tables
+    , pulsewaves_U32                       lookup_tables_index
+);
+
+/*---------------------------------------------------------------------------*/
+PULSEWAVES_API pulsewaves_I32
 pulsewaves_header_get_pulsedescriptor(
     pulsewaves_POINTER                     pointer
     , pulsewaves_pulsecomposition_struct** composition
@@ -350,7 +387,7 @@ PULSEWAVES_API pulsewaves_I32
 pulsewaves_header_set_geoascii_params(
     pulsewaves_POINTER                     pointer
     , pulsewaves_U32                       number
-    , pulsewaves_CHAR*                     geoascii_params
+    , pulsewaves_CHAR*                     geodouble_ascii
 );
 
 /*---------------------------------------------------------------------------*/
