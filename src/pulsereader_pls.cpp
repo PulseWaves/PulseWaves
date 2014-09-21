@@ -137,7 +137,6 @@ BOOL PULSEreaderPLS::open(ByteStreamIn* stream)
     return FALSE;
   }
 
-/*
   // check the compressor state
 
   if (header.pulsezip)
@@ -149,8 +148,12 @@ BOOL PULSEreaderPLS::open(ByteStreamIn* stream)
       fprintf(stderr,"       fails contact 'martin.isenburg@rapidlasso.com' for assistance.\n");
       return FALSE;
     }
+    compressed = TRUE;
   }
-*/
+  else
+  {
+    compressed = FALSE;
+  }
 
   // create the pulse reader
 
@@ -158,17 +161,38 @@ BOOL PULSEreaderPLS::open(ByteStreamIn* stream)
 
   // initialize pulse and the pulse_reader
 
-  if (header.pulsezip)
+  if (compressed)
   {
-    if (!pulse.init(&header, header.pulsezip->num_items, header.pulsezip->items)) return FALSE;
-    if (!pulse_reader->setup(header.pulsezip->num_items, header.pulsezip->items, header.pulsezip)) return FALSE;
+    if (!pulse.init(&header, header.pulsezip->num_items, header.pulsezip->items))
+    {
+      fprintf(stderr,"ERROR: initializing pulse from PULSEzip\n");
+      return FALSE;
+    }
+    if (!pulse_reader->setup(header.pulsezip->num_items, header.pulsezip->items, header.pulsezip))
+    {
+      fprintf(stderr,"ERROR: setting up pulse reader from PULSEzip\n");
+      return FALSE;
+    }
   }
   else
   {
-    if (!pulse.init(&header)) return FALSE;
-    if (!pulse_reader->setup(pulse.num_items, pulse.items)) return FALSE;
+    if (!pulse.init(&header))
+    {
+      fprintf(stderr,"ERROR: initializing pulse\n");
+      return FALSE;
+    }
+    if (!pulse_reader->setup(pulse.num_items, pulse.items))
+    {
+      fprintf(stderr,"ERROR: setting up pulse reader\n");
+      return FALSE;
+    }
   }
-  if (!pulse_reader->init(stream)) return FALSE;
+
+  if (!pulse_reader->init(stream))
+  {
+    fprintf(stderr,"ERROR: initializing pulse reader\n");
+    return FALSE;
+  }
 
   npulses = header.number_of_pulses;
   p_count = 0;
@@ -187,35 +211,33 @@ BOOL PULSEreaderPLS::open_waves()
   I32 len = strlen(temp_file_name);
   temp_file_name[len-3] = 'w';
   temp_file_name[len-2] = 'v';
-  temp_file_name[len-1] = 'z';
+  temp_file_name[len-1] = (compressed ? 'z' : 's');
 
   if (waves_file)
   {
     fclose(waves_file);
   }
 
-  // try open compressed version
+  // first try to open the file
+
   waves_file = fopen(temp_file_name, "rb");
-  if (waves_file == 0)
+
+  // then try to read four more bytes than the waves header
+
+  if (waves_file)
   {
-    // try open uncompressed version
-    temp_file_name[len-1] = 's';
-    waves_file = fopen(temp_file_name, "rb");
-    if (waves_file == 0)
+    U8 dummy[PULSEWAVES_WAVESHEADER_SIZE+4];
+    if (fread(dummy, 1, PULSEWAVES_WAVESHEADER_SIZE+4, waves_file) != PULSEWAVES_WAVESHEADER_SIZE+4)
     {
-      fprintf(stderr, "ERROR: cannot open file '%s'\n", temp_file_name);
-      free(temp_file_name);
-      return FALSE;
+      fclose(waves_file);
+      waves_file = 0;
     }
     else
     {
-      decompress_waves = FALSE;
+      fseek(waves_file, 0, SEEK_SET);
     }
   }
-  else
-  {
-    decompress_waves = TRUE;
-  }
+
   free(temp_file_name);
 
   if (waves_stream)
@@ -234,7 +256,7 @@ BOOL PULSEreaderPLS::open_waves()
     return FALSE;
   }
 
-  if (decompress_waves)
+  if (compressed)
   {
     waves_reader = new PULSEreadWaves_compressed();
   }
@@ -260,7 +282,7 @@ BOOL PULSEreaderPLS::open_waves()
 
 I32 PULSEreaderPLS::get_format() const
 {
-  return PULSEWAVES_FORMAT_PLS;
+  return (compressed ? PULSEWAVES_FORMAT_PLZ : PULSEWAVES_FORMAT_PLS);
 }
 
 BOOL PULSEreaderPLS::seek(const I64 p_index)
@@ -385,7 +407,7 @@ void PULSEreaderPLS::close(BOOL close_streams)
 
 PULSEreaderPLS::PULSEreaderPLS()
 {
-  decompress_waves = FALSE;
+  compressed = FALSE;
   file_name = 0;
   pulse_file = 0;
   waves_file = 0;

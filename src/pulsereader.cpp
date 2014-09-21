@@ -42,12 +42,12 @@
 #include "pulsereader_lgw.hpp"
 #include "pulsereader_gcw.hpp"
 #include "pulsereader_csd.hpp"
-#ifdef PULSEWAVES_SDF
+#ifdef _WIN32
 #include "pulsereader_sdf.hpp"
-#endif // PULSEWAVES_SDF
-#ifdef PULSEWAVES_LAS
 #include "pulsereader_las.hpp"
-#endif // PULSEWAVES_LAS
+#endif // _WIN32
+//#include "pulsereader_txt.hpp"
+//#include "pulsereader_dat.hpp"
 #endif // PULSEWAVES_DLL
 
 #include <stdlib.h>
@@ -536,7 +536,7 @@ PULSEreader* PULSEreadOpener::open(CHAR* other_file_name)
         return pulsereaderdat;
       }
 */
-#ifdef PULSEWAVES_SDF
+#ifdef _WIN32
       else if (strstr(file_name, ".sdf") || strstr(file_name, ".SDF"))
       {
         PULSEreaderSDF* pulsereadersdf;
@@ -573,8 +573,6 @@ PULSEreader* PULSEreadOpener::open(CHAR* other_file_name)
         }
         return pulsereadersdf;
       }
-#endif // PULSEWAVES_SDF
-#ifdef PULSEWAVES_LAS
       else if (strstr(file_name, ".las") || strstr(file_name, ".laz") || strstr(file_name, ".LAS") || strstr(file_name, ".LAZ"))
       {
         PULSEreaderLAS* pulsereaderlas;
@@ -611,7 +609,7 @@ PULSEreader* PULSEreadOpener::open(CHAR* other_file_name)
         }
         return pulsereaderlas;
       }
-#endif // PULSEWAVES_LAS
+#endif // _WIN32
 #endif // PULSEWAVES_DLL
     }
   }
@@ -715,7 +713,7 @@ BOOL PULSEreadOpener::reopen(PULSEreader* pulsereader)
         return TRUE;
       }
 */
-#ifdef PULSEWAVES_SDF
+#ifdef _WIN32
       else if (strstr(file_name, ".sdf") || strstr(file_name, ".SDF"))
       {
         PULSEreaderSDF* pulsereadersdf = (PULSEreaderSDF*)pulsereader;
@@ -730,8 +728,6 @@ BOOL PULSEreadOpener::reopen(PULSEreader* pulsereader)
         if (inside_rectangle) pulsereadersdf->inside_rectangle(inside_rectangle[0], inside_rectangle[1], inside_rectangle[2], inside_rectangle[3]);
         return TRUE;
       }
-#endif // PULSEWAVES_SDF
-#ifdef PULSEWAVES_LAS
       else if (strstr(file_name, ".las") || strstr(file_name, ".laz") || strstr(file_name, ".LAS") || strstr(file_name, ".LAZ"))
       {
         PULSEreaderLAS* pulsereaderlas = (PULSEreaderLAS*)pulsereader;
@@ -746,8 +742,7 @@ BOOL PULSEreadOpener::reopen(PULSEreader* pulsereader)
         if (inside_rectangle) pulsereaderlas->inside_rectangle(inside_rectangle[0], inside_rectangle[1], inside_rectangle[2], inside_rectangle[3]);
         return TRUE;
       }
-#endif // PULSEWAVES_LAS
-	  else
+      else
       {
 /*
         PULSEreaderTXT* pulsereadertxt = (PULSEreaderTXT*)pulsereader;
@@ -763,6 +758,7 @@ BOOL PULSEreadOpener::reopen(PULSEreader* pulsereader)
         return TRUE;
 */
       }
+#endif // _WIN32
 #endif // PULSEWAVES_DLL
     }
   }
@@ -778,15 +774,27 @@ void PULSEreadOpener::usage() const
 #ifndef PULSEWAVES_DLL
   fprintf(stderr,"  -i lidar.lgw\n");
   fprintf(stderr,"  -i lidar.lgc\n");
-#ifdef PULSEWAVES_SDF
+#ifdef _WIN32
   fprintf(stderr,"  -i lidar.sdf\n");
-#endif // PULSEWAVES_SDF
-#ifdef PULSEWAVES_LAS
   fprintf(stderr,"  -i lidar.las\n");
   fprintf(stderr,"  -i lidar.laz\n");
-#endif // PULSEWAVES_LAS
+#endif // _WIN32
 #endif // PULSEWAVES_DLL
   fprintf(stderr,"  -h\n");
+/*
+  fprintf(stderr,"  -i lidar.laz\n");
+  fprintf(stderr,"  -i lidar1.las lidar2.las lidar3.las -merged\n");
+  fprintf(stderr,"  -i *.las\n");
+  fprintf(stderr,"  -i flight0??.laz flight1??.laz -single\n");
+  fprintf(stderr,"  -i terrasolid.bin\n");
+  fprintf(stderr,"  -i esri.shp\n");
+  fprintf(stderr,"  -i nasa.qi\n");
+  fprintf(stderr,"  -i lidar.txt -iparse xyzti -iskip 2 (on-the-fly from ASCII)\n");
+  fprintf(stderr,"  -i lidar.txt -iparse xyzi -itranslate_intensity 1024\n");
+  fprintf(stderr,"  -lof file_list.txt\n");
+  fprintf(stderr,"  -rescale 0.1 0.1 0.1\n");
+  fprintf(stderr,"  -reoffset 600000 4000000 0\n");
+*/
 }
 
 BOOL PULSEreadOpener::parse(int argc, char* argv[])
@@ -1158,8 +1166,8 @@ void PULSEreadOpener::add_file_name_windows(const CHAR* file_name, BOOL unique)
       len++;
       CHAR full_file_name[512];
       strncpy(full_file_name, file_name, len);
-	  do
-	  {
+	    do
+	    {
         sprintf(&full_file_name[len], "%s", info.cFileName);
         add_file_name(full_file_name, unique);
   	  } while (FindNextFile(h, &info));
@@ -1168,10 +1176,10 @@ void PULSEreadOpener::add_file_name_windows(const CHAR* file_name, BOOL unique)
     {
       do
       {
-        add_file_name((const char*)info.cFileName, unique);
+        add_file_name(info.cFileName, unique);
   	  } while (FindNextFile(h, &info));
     }
-	FindClose(h);
+	  FindClose(h);
   }
 }
 #endif // _WIN32
@@ -1237,7 +1245,7 @@ PULSEreadOpener::PULSEreadOpener()
 {
   file_names = 0;
   file_name = 0;
-  merged = TRUE;
+  merged = FALSE;
   scale_factor = 0;
   offset = 0;
   files_are_flightlines = FALSE;

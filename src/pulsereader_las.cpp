@@ -13,7 +13,7 @@
   
   COPYRIGHT:
   
-    (c) 2007-2013, martin isenburg, rapidlasso - fast tools to catch reality
+    (c) 2007-2014, martin isenburg, rapidlasso - fast tools to catch reality
 
     This is free software; you can redistribute and/or modify it under the
     terms of the GNU Lesser General Licence as published by the Free Software
@@ -65,8 +65,7 @@ BOOL PULSEreaderLAS::open(const char* file_name, U32 io_buffer_size)
   // open the lasreader
 
   LASreadOpener lasreadopener;
-  lasreadopener.set_file_name(file_name);
-  lasreader = lasreadopener.open();
+  lasreader = lasreadopener.open(file_name);
   if (lasreader == 0)
   {
     fprintf(stderr,"ERROR: cannot open file '%s'\n", file_name);
@@ -95,7 +94,7 @@ BOOL PULSEreaderLAS::open(const char* file_name, U32 io_buffer_size)
 
 BOOL PULSEreaderLAS::open()
 {
-  U32 i;
+  I32 i;
 
   // clean the header
 
@@ -240,7 +239,7 @@ BOOL PULSEreaderLAS::open()
         sampling.compression = PULSEWAVES_UNCOMPRESSED;        // the samples are stored without compression
         sprintf(sampling.description, "%d samples at %d bits", sampling.number_of_samples, sampling.bits_per_sample);
 
-        header.add_descriptor(&composition, &sampling, i);
+        header.add_descriptor(&composition, &sampling, i, TRUE);
       }
     }
   }
@@ -261,10 +260,21 @@ BOOL PULSEreaderLAS::seek(const I64 p_index)
 {
   if (p_index < npulses)
   {
-    if (lasreader->seek(p_index))
+    if (seek_map == 0)
     {
-      p_count = p_index;
-      return TRUE;
+      if (lasreader->seek(p_index))
+      {
+        p_count = p_index;
+        return TRUE;
+      }
+    }
+    else
+    {
+      if (lasreader->seek((I64)seek_map[p_index]))
+      {
+        p_count = p_index;
+        return TRUE;
+      }
     }
   }
   return FALSE;
@@ -289,7 +299,8 @@ BOOL PULSEreaderLAS::read_pulse_default()
         {
           if (lasreader->header.vlr_wave_packet_descr[index])
           {
-            pulse.set_T(lasreader->point.gps_time);
+            I64 T = I64_QUANTIZE(lasreader->point.gps_time*1000000);
+            pulse.set_T(T);
             pulse.offset = lasreader->point.wavepacket.getOffset();
             pulse.descriptor_index = index;
             pulse.edge_of_scan_line = lasreader->point.edge_of_flight_line;
@@ -311,8 +322,8 @@ BOOL PULSEreaderLAS::read_pulse_default()
             anchor[1] = lasreader->point.get_y() + location*target[1];
             anchor[2] = lasreader->point.get_z() + location*target[2];
 
-            target[0] = anchor[0] + target[0] * temporal;
-            target[1] = anchor[1] + target[1] * temporal;
+            target[0] = anchor[0] - target[0] * temporal;
+            target[1] = anchor[1] - target[1] * temporal;
             target[2] = anchor[2] - target[2] * temporal;
 
             pulse.set_anchor_and_target(anchor, target);
@@ -325,6 +336,18 @@ BOOL PULSEreaderLAS::read_pulse_default()
       }
     }
     p_count++;
+    if (p_count < lasreader->p_count)
+    {
+      if (seek_map == 0)
+      {
+        seek_map = (U32*)malloc(100000*sizeof(U32));
+      }
+      else if ((p_count % 100000) == 0)
+      {
+        seek_map = (U32*)realloc(seek_map,100000*sizeof(U32)*((p_count+100000)/100000));
+      }
+      seek_map[p_count-1] = (U32)lasreader->p_count-1;
+    }
     return TRUE;
   }
   return FALSE;
@@ -417,9 +440,11 @@ PULSEreaderLAS::PULSEreaderLAS()
   laswaveform13reader = 0;
   last_gps_time = 0.0;
   memset(waves_map, 0, sizeof(WAVESwaves*)*256);
+  seek_map = 0;
 }
 
 PULSEreaderLAS::~PULSEreaderLAS()
 {
   if (lasreader) close();
+  if (seek_map) free(seek_map);
 }

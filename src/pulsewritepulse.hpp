@@ -35,7 +35,7 @@
 
 class PULSEzip;
 class ByteStreamOut;
-class EntropyEncoder;
+class ArithmeticEncoder;
 
 class PULSEwritePulse
 {
@@ -57,7 +57,7 @@ private:
   PULSEwriteItem** writers;
   PULSEwriteItem** writers_raw;
   PULSEwriteItem** writers_compressed;
-  EntropyEncoder* enc;
+  ArithmeticEncoder* enc;
   // used for chunking
   U32 chunk_size;
   U32 chunk_count;

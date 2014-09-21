@@ -35,7 +35,7 @@
 
 class PULSEzip;
 class ByteStreamIn;
-class EntropyDecoder;
+class ArithmeticDecoder;
 
 class PULSEreadPulse
 {
@@ -57,7 +57,7 @@ private:
   PULSEreadItem** readers;
   PULSEreadItem** readers_raw;
   PULSEreadItem** readers_compressed;
-  EntropyDecoder* dec;
+  ArithmeticDecoder* dec;
   // used for chunking
   U32 chunk_size;
   U32 chunk_count;

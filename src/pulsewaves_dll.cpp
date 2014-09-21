@@ -13,7 +13,7 @@
   
   COPYRIGHT:
   
-    (c) 2007-2013, martin isenburg, rapidlasso - fast tools to catch reality
+    (c) 2007-2014, martin isenburg, rapidlasso - fast tools to catch reality
 
     This is free software; you can redistribute and/or modify it under the
     terms of the GNU Lesser General Licence as published by the Free Software
@@ -429,7 +429,7 @@ pulsewaves_header_add_scanner(
     s.maximal_range = scanner->maximal_range;                                   // [meters]
     strncpy(s.description, scanner->description, PULSEWAVES_DESCRIPTION_SIZE);
 
-    if (!pulsewaves->header.add_scanner(&s, scanner_index))
+    if (!pulsewaves->header.add_scanner(&s, scanner_index, TRUE))
     {
       sprintf(pulsewaves->error, "adding scanner with scanner_index %u to header", scanner_index);
       return 1;
@@ -581,7 +581,7 @@ pulsewaves_header_add_lookup_tables(
     }
     sprintf(table.description, "PulseWaves DLL %d.%d r%d (%d) by rapidlasso", PULSEWAVES_VERSION_MAJOR, PULSEWAVES_VERSION_MINOR, PULSEWAVES_REVISION, PULSEWAVES_BUILD_DATE);
 
-    if (!pulsewaves->header.add_table(&table, table_index))
+    if (!pulsewaves->header.add_table(&table, table_index, TRUE))
     {
       sprintf(pulsewaves->error, "adding lookup tables with table_index %u to header", table_index);
       return 1;
@@ -665,6 +665,7 @@ pulsewaves_header_get_pulsedescriptor(
       samplings[i].number_of_segments = pulsesamplings[i].number_of_segments;
       samplings[i].number_of_samples = pulsesamplings[i].number_of_samples;
       samplings[i].bits_per_sample = pulsesamplings[i].bits_per_sample;
+      samplings[i].lookup_table_index = pulsesamplings[i].lookup_table_index;
       samplings[i].sample_units = pulsesamplings[i].sample_units; // [nanoseconds]
       strncpy(samplings[i].description, pulsesamplings[i].description, PULSEWAVES_DESCRIPTION_SIZE);
     }
@@ -836,12 +837,13 @@ pulsewaves_header_add_pulsedescriptor(
         samplings[i].number_of_segments = pulsesamplings[i].number_of_segments;
         samplings[i].number_of_samples = pulsesamplings[i].number_of_samples;
         samplings[i].bits_per_sample = pulsesamplings[i].bits_per_sample;
+        samplings[i].lookup_table_index = pulsesamplings[i].lookup_table_index;
         samplings[i].sample_units = pulsesamplings[i].sample_units; // [nanoseconds]
         strncpy(samplings[i].description, pulsesamplings[i].description, PULSEWAVES_DESCRIPTION_SIZE);
       }
     }
 
-    if (!pulsewaves->header.add_descriptor(&composition, samplings, pulsedescriptor_index))
+    if (!pulsewaves->header.add_descriptor(&composition, samplings, pulsedescriptor_index, TRUE))
     {
       sprintf(pulsewaves->error, "adding pulsedescriptor %u", pulsedescriptor_index);
       return 1;
@@ -1296,7 +1298,7 @@ pulsewaves_writer_open(
 
     // open the pulse file
 
-    if (!pulsewaves->writer.open(file_name, &pulsewaves->header, compress, compress))
+    if (!pulsewaves->writer.open(file_name, &pulsewaves->header, compress))
     {
       sprintf(pulsewaves->error, "cannot open writer for '%s'", file_name);
       return 1;

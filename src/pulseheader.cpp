@@ -844,7 +844,7 @@ BOOL PULSEheader::add_descriptor(const PULSEcomposition* composition, const PULS
   return TRUE;
 }
 
-U32 PULSEheader::add_descriptor(const PULSEcomposition* composition, const PULSEsampling* samplings, BOOL add_to_vlrs)
+U32 PULSEheader::add_descriptor_assign_index(const PULSEcomposition* composition, const PULSEsampling* samplings, BOOL add_to_vlrs)
 {
   U32 descriptor_index = num_descriptors + 1;
   if (add_descriptor(composition, samplings, descriptor_index, add_to_vlrs))
@@ -1206,7 +1206,7 @@ BOOL PULSEheader::load(ByteStreamIn* stream)
 
       if (strncmp(vlrs[i].user_id, "PulseWaves_Proj", PULSEWAVES_USER_ID_SIZE) == 0)
       {
-         if (vlrs[i].record_id == 34735) // GeoKeyDirectoryTag
+        if (vlrs[i].record_id == 34735) // GeoKeyDirectoryTag
         {
           if (geokeys)
           {
@@ -1345,6 +1345,13 @@ BOOL PULSEheader::load(ByteStreamIn* stream)
             return FALSE;
           }
 
+          // remove PULSEzip VRL from header
+
+          vlrs_size -= (vlrs[i].record_length_after_header + PULSEWAVES_VLRHEADER_SIZE);
+          offset_to_pulse_data -= (vlrs[i].record_length_after_header + PULSEWAVES_VLRHEADER_SIZE);
+          number_of_variable_length_records--;
+          i--;
+
           delete bytestreaminarray;
         }
         else if ((PULSEWAVES_DESCRIPTOR_RECORD_ID_MIN <= vlrs[i].record_id) && (vlrs[i].record_id <= PULSEWAVES_DESCRIPTOR_RECORD_ID_MAX)) // PulseDescriptor
@@ -1370,6 +1377,7 @@ BOOL PULSEheader::load(ByteStreamIn* stream)
             return FALSE;
           }
           delete bytestreaminarray;
+
           if (!add_descriptor(descriptor.composition, descriptor.samplings, vlrs[i].record_id - PULSEWAVES_DESCRIPTOR_RECORD_ID, FALSE))
           {
             return FALSE;

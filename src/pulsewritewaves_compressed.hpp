@@ -42,7 +42,6 @@ public:
 
   BOOL init(ByteStreamOut* outstream);
   BOOL write(const WAVESwaves* waves);
-  BOOL done();
 
   PULSEwriteWaves_compressed();
   ~PULSEwriteWaves_compressed();

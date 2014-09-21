@@ -301,6 +301,49 @@ BOOL PULSEreaderSDF::open()
     return FALSE;
   }
 
+/*
+  fwifc_uint32_t c, count;      // length of returned table
+  fwifc_float64_t* abscissa;    // table values, valid until next
+  fwifc_float64_t* ordinate;    // call into library
+  try
+  {
+    fwifc_get_calib((fwifc_file)fwifc_handle, FWIFC_CALIB_AMPL_CH0, &count, &abscissa, &ordinate);
+    fprintf(stderr,"FWIFC_CALIB_AMPL_CH0\n");
+    for (c = 0; c < count; c++)
+    {
+      fprintf(stderr,"%g %g\n", abscissa[c], ordinate[c]);
+    }
+    fwifc_get_calib((fwifc_file)fwifc_handle, FWIFC_CALIB_AMPL_CH1, &count, &abscissa, &ordinate);
+    fprintf(stderr,"FWIFC_CALIB_AMPL_CH1\n");
+    for (c = 0; c < count; c++)
+    {
+      fprintf(stderr,"%g %g\n", abscissa[c], ordinate[c]);
+    }
+    fwifc_get_calib((fwifc_file)fwifc_handle, FWIFC_CALIB_RNG_CH0, &count, &abscissa, &ordinate);
+    fprintf(stderr,"FWIFC_CALIB_RNG_CH0\n");
+    for (c = 0; c < count; c++)
+    {
+      fprintf(stderr,"%g %g\n", abscissa[c], ordinate[c]);
+    }
+    fwifc_get_calib((fwifc_file)fwifc_handle, FWIFC_CALIB_RNG_CH1, &count, &abscissa, &ordinate);
+    fprintf(stderr,"FWIFC_CALIB_RNG_CH1\n");
+    for (c = 0; c < count; c++)
+    {
+      fprintf(stderr,"%g %g\n", abscissa[c], ordinate[c]);
+    }
+  }
+  catch (exception& e)
+  {
+    fprintf(stderr,"ERROR: %s\n", e.what());
+    return FALSE;
+  }
+  catch (...)
+  {
+    fprintf(stderr,"ERROR: unknown exception in fwifc_seek(1)\n");
+    return FALSE;
+  }
+*/
+
   // clean the header
 
   header.clean();
@@ -563,7 +606,7 @@ BOOL PULSEreaderSDF::open()
   scanner.beam_diameter_at_exit_aperture = 0.0f; // [millimeters]
   scanner.beam_divergence = 0.0f;                // [milliradians]
 
-  header.add_scanner(&scanner, 1);
+  header.add_scanner(&scanner, 1, TRUE);
 
   // init pulse descriptor
 
@@ -759,7 +802,7 @@ BOOL PULSEreaderSDF::open()
     if (header.find_descriptor(&composition, samplings) == 0)
     {
       fprintf(stderr, "samplings: %d ref: %d low: %d high: %d\n", composition.number_of_samplings, ref_number, low_number, high_number);
-      header.add_descriptor(&composition, samplings);
+      header.add_descriptor_assign_index(&composition, samplings, TRUE);
     }
   }
 

@@ -9,12 +9,12 @@
     see: http://www.cipr.rpi.edu/~said/FastAC.html
 
   PROGRAMMERS:
-  
+
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-  
+
   COPYRIGHT:
-  
-    (c) 2007-2013, martin isenburg, rapidlasso - fast tools to catch reality
+
+    (c) 2005-2014, martin isenburg, rapidlasso - fast tools to catch reality
 
     This is free software; you can redistribute and/or modify it under the
     terms of the GNU Lesser General Licence as published by the Free Software

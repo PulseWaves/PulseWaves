@@ -58,7 +58,7 @@ PULSEwriter* PULSEwriteOpener::open(PULSEheader* header)
     if (format <= PULSEWAVES_FORMAT_PLZ)
     {
       PULSEwriterPLS* pulsewriterpls = new PULSEwriterPLS();
-      if (!pulsewriterpls->open(file_name, header, (format == PULSEWAVES_FORMAT_PLZ), compress_waves))
+      if (!pulsewriterpls->open(file_name, header, (format == PULSEWAVES_FORMAT_PLZ)))
       {
         fprintf(stderr,"ERROR: cannot open pulsewriterpls with file name '%s'\n", file_name);
         delete pulsewriterpls;
@@ -234,20 +234,14 @@ BOOL PULSEwriteOpener::parse(int argc, char* argv[])
       format = PULSEWAVES_FORMAT_PLS;
       *argv[i]='\0';
     }
-    else if (strcmp(argv[i],"-otxt") == 0)
-    {
-      format = PULSEWAVES_FORMAT_TXT;
-      *argv[i]='\0';
-    }
     else if (strcmp(argv[i],"-oplz") == 0)
     {
       format = PULSEWAVES_FORMAT_PLZ;
-      compress_waves = TRUE;
       *argv[i]='\0';
     }
-    else if (strcmp(argv[i],"-owvz") == 0)
+    else if (strcmp(argv[i],"-otxt") == 0)
     {
-      compress_waves = TRUE;
+      format = PULSEWAVES_FORMAT_TXT;
       *argv[i]='\0';
     }
     else if (strcmp(argv[i],"-stdout") == 0)
@@ -344,21 +338,26 @@ void PULSEwriteOpener::set_format(const char* format)
   {
     if (strstr(format, "plz") || strstr(format, "PLZ"))
     {
-      this->format = PULSEWAVES_FORMAT_PLZ;
+      set_format(PULSEWAVES_FORMAT_PLZ);
     }
     else if (strstr(format, "pls") || strstr(format, "PLS"))
     {
-      this->format = PULSEWAVES_FORMAT_PLS;
+      set_format(PULSEWAVES_FORMAT_PLS);
     }
     else // assume ascii output
     {
-      this->format = PULSEWAVES_FORMAT_TXT;
+      set_format(PULSEWAVES_FORMAT_TXT);
     }
   }
   else
   {
-    this->format = PULSEWAVES_FORMAT_DEFAULT;
+    set_format(PULSEWAVES_FORMAT_DEFAULT);
   }
+}
+
+void PULSEwriteOpener::set_format(I32 format)
+{
+  this->format = format;
 }
 
 void PULSEwriteOpener::set_parse_string(const char* parse_string)
@@ -547,6 +546,11 @@ I32 PULSEwriteOpener::get_format() const
   return format;
 }
 
+BOOL PULSEwriteOpener::is_piped() const
+{
+  return ((file_name == 0) && use_stdout);
+}
+
 BOOL PULSEwriteOpener::active() const
 {
   return (file_name != 0 || use_stdout || use_stderr || use_nil);
@@ -560,7 +564,6 @@ PULSEwriteOpener::PULSEwriteOpener()
   parse_string = 0;
   separator = 0;
   format = PULSEWAVES_FORMAT_DEFAULT;
-  compress_waves = FALSE;
   use_stdout = FALSE;
   use_stderr = FALSE;
   use_nil = FALSE;

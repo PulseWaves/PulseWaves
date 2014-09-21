@@ -228,11 +228,6 @@ BOOL PULSEwriteWaves_compressed::write(const WAVESwaves* waves)
   return TRUE;
 }
 
-BOOL PULSEwriteWaves_compressed::done()
-{
-  return TRUE;
-}
-
 PULSEwriteWaves_compressed::PULSEwriteWaves_compressed()
 {
   outstream = 0;

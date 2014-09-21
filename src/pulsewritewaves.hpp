@@ -40,7 +40,6 @@ public:
 
   virtual BOOL init(ByteStreamOut* outstream) = 0;
   virtual BOOL write(const WAVESwaves* waves) = 0;
-  virtual BOOL done() = 0;
 
   inline I64 get_current_offset() const { if (outstream == 0) { return 0; } return outstream->tell(); }
 

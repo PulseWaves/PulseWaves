@@ -657,7 +657,7 @@ BOOL PULSEreaderLGW::open()
   scanner.beam_divergence = 0.8f;                // [milliradians]
   strncpy(scanner.instrument, "NASA Laser Vegetation Imaging Sensor (LVIS)", PULSEWAVES_DESCRIPTION_SIZE);
 
-  header.add_scanner(&scanner, 1);
+  header.add_scanner(&scanner, 1, TRUE);
 
   // create descriptor (composition plus samplings)
 

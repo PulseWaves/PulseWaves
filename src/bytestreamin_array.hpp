@@ -26,8 +26,8 @@
   
 ===============================================================================
 */
-#ifndef BYTE_STREAM_IN_ARRAY_H
-#define BYTE_STREAM_IN_ARRAY_H
+#ifndef BYTE_STREAM_IN_ARRAY_HPP
+#define BYTE_STREAM_IN_ARRAY_HPP
 
 #include "bytestreamin.hpp"
 

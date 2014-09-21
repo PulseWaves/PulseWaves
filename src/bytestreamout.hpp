@@ -5,12 +5,14 @@
   
   CONTENTS:
       
+    Abstract base class for output streams with endian handling.
+
   PROGRAMMERS:
-  
+
     martin.isenburg@rapidlasso.com  -  http://rapidlasso.com
-  
+
   COPYRIGHT:
-  
+
     (c) 2007-2013, martin isenburg, rapidlasso - fast tools to catch reality
 
     This is free software; you can redistribute and/or modify it under the
@@ -22,6 +24,7 @@
   
   CHANGE HISTORY:
   
+     2 January 2013 -- new functions for writing a stream of groups of bits  
      1 October 2011 -- added 64 bit file support in MSVC 6.0 at McCafe at Hbf Linz
     10 January 2011 -- licensing change for LGPL release and liblas integration
     12 December 2010 -- created from ByteStreamOutFile after Howard got pushy (-;
@@ -36,6 +39,32 @@
 class ByteStreamOut
 {
 public:
+/* write single bits                                         */
+  inline void putBits(U32 bits, U32 num_bits)
+  {
+    U64 new_bits = bits;
+    bit_buffer |= (new_bits << num_buffer);
+    num_buffer += num_bits;
+    if (num_buffer >= 32)
+    {
+      U32 output_bits = (U32)(bit_buffer & U32_MAX);
+      bit_buffer = bit_buffer >> 32;
+      num_buffer = num_buffer - 32;
+      put32bitsLE((U8*)&output_bits);
+    }
+  };
+/* called after writing bits before closing or writing bytes */
+  inline void flushBits()
+  {
+    if (num_buffer)
+    {
+      U32 num_zero_bits = 32 - num_buffer;
+      U32 output_bits = (U32)(bit_buffer >> num_zero_bits);
+      bit_buffer = 0;
+      num_buffer = 0;
+      put32bitsLE((U8*)&output_bits);
+    }
+  };
 /* write a single byte                                       */
   virtual void putByte(U8 byte) = 0;
 /* write an array of bytes                                   */
@@ -60,8 +89,13 @@ public:
   virtual BOOL seek(const I64 position) = 0;
 /* seek to the end of the file                               */
   virtual BOOL seekEnd() = 0;
+/* constructor                                               */
+  inline ByteStreamOut() { bit_buffer = 0; num_buffer = 0; };
 /* destructor                                                */
   virtual ~ByteStreamOut() {};
+private:
+  U64 bit_buffer;
+  U32 num_buffer;
 };
 
 #endif

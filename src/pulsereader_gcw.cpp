@@ -446,7 +446,7 @@ BOOL PULSEreaderGCW::open()
   scanner.beam_diameter_at_exit_aperture = 0; // [millimeters]
   scanner.beam_divergence = 0;                // [milliradians]
 
-  header.add_scanner(&scanner, 1);
+  header.add_scanner(&scanner, 1, TRUE);
 
   // create pulse descriptors (composition + samplings)
 

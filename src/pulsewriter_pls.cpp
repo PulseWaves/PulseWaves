@@ -60,43 +60,18 @@ BOOL PULSEwriterPLS::refile_waves(FILE* waves_file)
   return ((ByteStreamOutFile*)waves_stream)->refile(waves_file);
 }
 
-BOOL PULSEwriterPLS::open(PULSEheader* header, U32 compress_pulse, U32 compress_waves)
+BOOL PULSEwriterPLS::open(PULSEheader* header, U32 compress)
 {
   ByteStreamOut* out = new ByteStreamOutNil();
-  return open(out, header, compress_pulse, compress_waves);
+  return open(out, header, compress);
 }
 
-BOOL PULSEwriterPLS::open(const char* file_name, PULSEheader* header, U32 compress_pulse, U32 compress_waves, U32 io_buffer_size)
+BOOL PULSEwriterPLS::open(const char* file_name, PULSEheader* header, U32 compress, U32 io_buffer_size)
 {
   if (file_name == 0)
   {
     fprintf(stderr,"ERROR: file name pointer is zero\n");
     return FALSE;
-  }
-
-  int len = strlen(file_name);
-
-  if (((file_name[len - 3] != 'p') && (file_name[len - 3] != 'P')) || ((file_name[len - 2] != 'l') && (file_name[len - 2] != 'L')))
-  {
-    fprintf(stderr,"ERROR: %sfile name needs to end in *.%s\n", (compress_pulse ? "compressed " : ""), (compress_pulse ? "plz" : "pls"));
-    return FALSE;
-  }
-
-  if (compress_pulse)
-  {
-    if ((file_name[len - 1] != 'z') && (file_name[len - 1] != 'Z'))
-    {    
-      fprintf(stderr,"ERROR: compressed file name needs to end in *.plz\n");
-      return FALSE;
-    }
-  }
-  else
-  {
-    if ((file_name[len - 1] != 's') && (file_name[len - 1] != 'S'))
-    {    
-      fprintf(stderr,"ERROR: file name needs to end in *.pls\n");
-      return FALSE;
-    }
   }
 
   pulse_file = fopen(file_name, "wb");
@@ -120,10 +95,10 @@ BOOL PULSEwriterPLS::open(const char* file_name, PULSEheader* header, U32 compre
   if (this->file_name) free(this->file_name);
   this->file_name = strdup(file_name);
 
-  return open(out, header, compress_pulse, compress_waves);
+  return open(out, header, compress);
 }
 
-BOOL PULSEwriterPLS::open(FILE* file, PULSEheader* header, U32 compress_pulse, U32 compress_waves)
+BOOL PULSEwriterPLS::open(FILE* file, PULSEheader* header, U32 compress)
 {
   if (file == 0)
   {
@@ -147,10 +122,10 @@ BOOL PULSEwriterPLS::open(FILE* file, PULSEheader* header, U32 compress_pulse, U
   else
     out = new ByteStreamOutFileBE(file);
 
-  return open(out, header, compress_pulse, compress_waves);
+  return open(out, header, compress);
 }
 
-BOOL PULSEwriterPLS::open(ostream& stream, PULSEheader* header, U32 compress_pulse, U32 compress_waves)
+BOOL PULSEwriterPLS::open(ostream& stream, PULSEheader* header, U32 compress)
 {
   ByteStreamOut* out;
   if (IS_LITTLE_ENDIAN())
@@ -158,10 +133,10 @@ BOOL PULSEwriterPLS::open(ostream& stream, PULSEheader* header, U32 compress_pul
   else
     out = new ByteStreamOutOstreamBE(stream);
 
-  return open(out, header, compress_pulse, compress_waves);
+  return open(out, header, compress);
 }
 
-BOOL PULSEwriterPLS::open(ByteStreamOut* stream, PULSEheader* header, U32 compress_pulse, U32 compress_waves)
+BOOL PULSEwriterPLS::open(ByteStreamOut* stream, PULSEheader* header, U32 compress)
 {
   if (stream == 0)
   {
@@ -214,12 +189,12 @@ BOOL PULSEwriterPLS::open(ByteStreamOut* stream, PULSEheader* header, U32 compre
 
   // do we need a new pulsezip VLR (because we compress or use non-standard pulses?) 
 
-  if (compress_pulse || !pulse_is_standard)
+  if (compress || pulse_is_standard == FALSE)
   {
     header->pulsezip = new PULSEzip();
-    header->pulsezip->setup(pulse.num_items, pulse.items, compress_pulse);
+    header->pulsezip->setup(pulse.num_items, pulse.items, compress);
 //    if (chunk_size > -1) header->pulsezip->set_chunk_size((U32)chunk_size);
-    if (compress_pulse == PULSEZIP_COMPRESSOR_NONE)
+    if (compress == PULSEZIP_COMPRESSOR_NONE)
     {
       header->pulsezip->request_version(0);
     }
@@ -257,8 +232,7 @@ BOOL PULSEwriterPLS::open(ByteStreamOut* stream, PULSEheader* header, U32 compre
     return FALSE;
   }
 
-  this->compress_pulse = compress_pulse;
-  this->compress_waves = compress_waves;
+  this->compress = compress;
 
   npulses = header->number_of_pulses;
   p_count = 0;
@@ -277,7 +251,7 @@ BOOL PULSEwriterPLS::open_waves()
   I32 len = strlen(temp_file_name);
   temp_file_name[len-3] = 'w';
   temp_file_name[len-2] = 'v';
-  temp_file_name[len-1] = (compress_waves ? 'z' : 's');
+  temp_file_name[len-1] = (compress ? 'z' : 's');
 
   if (waves_file)
   {
@@ -311,7 +285,7 @@ BOOL PULSEwriterPLS::open_waves()
 
   WAVESheader waves_header;
 
-  if (compress_waves)
+  if (compress)
   {
     waves_header.compression = 1;
   }
@@ -326,7 +300,7 @@ BOOL PULSEwriterPLS::open_waves()
     return FALSE;
   }
 
-  if (compress_waves)
+  if (compress)
   {
     waves_writer = new PULSEwriteWaves_compressed();
   }
@@ -629,7 +603,7 @@ I64 PULSEwriterPLS::close(BOOL update_header)
 
 PULSEwriterPLS::PULSEwriterPLS()
 {
-  compress_waves = FALSE;
+  compress = FALSE;
   file_name = 0;
   pulse_file = 0;
   waves_file = 0;

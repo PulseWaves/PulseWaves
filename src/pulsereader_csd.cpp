@@ -837,7 +837,7 @@ BOOL PULSEreaderCSD::open()
   scanner.beam_diameter_at_exit_aperture = 0; // [millimeters]
   scanner.beam_divergence = 0;                // [milliradians]
 
-  header.add_scanner(&scanner, 1);
+  header.add_scanner(&scanner, 1, TRUE);
 
   // create pulse descriptors (composition + samplings)
 
@@ -1451,7 +1451,7 @@ BOOL PULSEreaderCSD::read_waves()
       I32 time = *((U16*)&(line_data[offset_total+1+num_samples]));
       time = time * 8;
 
-      if (!sampling->set_duration_from_anchor_for_segment((F32)time))
+      if (!sampling->set_duration_from_anchor_for_segment(time))
       {
         fprintf(stderr,"ERROR: duration %d from anchor to segment %d cannot be represented with %d bits\n", time, s, sampling->get_bits_for_duration_from_anchor());
         return FALSE;

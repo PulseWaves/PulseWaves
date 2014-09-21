@@ -33,14 +33,14 @@
 
 #include "pulsereaditem.hpp"
 #include "pulseziphelper.hpp"
-#include "entropydecoder.hpp"
+#include "arithmeticdecoder.hpp"
 #include "integercompressor.hpp"
 
 class PULSEreadItemCompressed_PULSE0_v1 : public PULSEreadItemCompressed
 {
 public:
 
-  PULSEreadItemCompressed_PULSE0_v1(EntropyDecoder* dec);
+  PULSEreadItemCompressed_PULSE0_v1(ArithmeticDecoder* dec);
 
   BOOL init(const U8* item);
   void read(U8* item);
@@ -48,7 +48,7 @@ public:
   ~PULSEreadItemCompressed_PULSE0_v1();
 
 private:
-  EntropyDecoder* dec;
+  ArithmeticDecoder* dec;
   U8 last_item[PULSEWAVES_PULSE0_SIZE];
   I32 last_T_diff;
   I64 last_T;
@@ -68,12 +68,12 @@ private:
   PULSEzipContextMapper16to7orLess cm_bit_byte;
   PULSEzipContextMapper16to7orLess cm_classification;
 
-  EntropyModel* m_T_diff_multi;
-  EntropyModel* m_T_last_diff_zero;
-  EntropyModel* m_changed_values[PULSEZIP_CHANGED_VALUES_CONTEXT_NUMBER];
-  EntropyModel* m_descriptor_index[PULSEZIP_DESCRIPTOR_CONTEXT_NUMBER];
-  EntropyModel* m_bit_byte[PULSEZIP_BIT_BYTE_CONTEXT_NUMBER];
-  EntropyModel* m_classification[PULSEZIP_CLASSIFICATION_CONTEXT_NUMBER];
+  ArithmeticModel* m_T_diff_multi;
+  ArithmeticModel* m_T_last_diff_zero;
+  ArithmeticModel* m_changed_values[PULSEZIP_CHANGED_VALUES_CONTEXT_NUMBER];
+  ArithmeticModel* m_descriptor_index[PULSEZIP_DESCRIPTOR_CONTEXT_NUMBER];
+  ArithmeticModel* m_bit_byte[PULSEZIP_BIT_BYTE_CONTEXT_NUMBER];
+  ArithmeticModel* m_classification[PULSEZIP_CLASSIFICATION_CONTEXT_NUMBER];
   IntegerCompressor* ic_T;
   IntegerCompressor* ic_offset_diff;
   IntegerCompressor* ic_first_returning_sample;
@@ -93,7 +93,7 @@ class PULSEreadItemCompressed_PULSESOURCEID16_v1 : public PULSEreadItemCompresse
 {
 public:
 
-  PULSEreadItemCompressed_PULSESOURCEID16_v1(EntropyDecoder* dec);
+  PULSEreadItemCompressed_PULSESOURCEID16_v1(ArithmeticDecoder* dec);
 
   BOOL init(const U8* item);
   void read(U8* item);
@@ -101,11 +101,11 @@ public:
   ~PULSEreadItemCompressed_PULSESOURCEID16_v1();
 
 private:
-  EntropyDecoder* dec;
+  ArithmeticDecoder* dec;
   U16 last_pulse_source_ID;
   U16 oldest_pulse_source_IDs;
   U16 previous_pulse_source_IDs[PULSEZIP_PULSESOURCE16_ID_TABLE];
-  EntropyModel* m_sameID;
+  ArithmeticModel* m_sameID;
   IntegerCompressor* ic_newID;
 };
 
@@ -115,7 +115,7 @@ class PULSEreadItemCompressed_PULSESOURCEID32_v1 : public PULSEreadItemCompresse
 {
 public:
 
-  PULSEreadItemCompressed_PULSESOURCEID32_v1(EntropyDecoder* dec);
+  PULSEreadItemCompressed_PULSESOURCEID32_v1(ArithmeticDecoder* dec);
 
   BOOL init(const U8* item);
   void read(U8* item);
@@ -123,11 +123,11 @@ public:
   ~PULSEreadItemCompressed_PULSESOURCEID32_v1();
 
 private:
-  EntropyDecoder* dec;
+  ArithmeticDecoder* dec;
   U32 last_pulse_source_ID;
   U32 oldest_pulse_source_IDs;
   U32 previous_pulse_source_IDs[PULSEZIP_PULSESOURCE32_ID_TABLE];
-  EntropyModel* m_sameID;
+  ArithmeticModel* m_sameID;
   IntegerCompressor* ic_newID;
 };
 
@@ -135,7 +135,7 @@ class PULSEreadItemCompressed_EXTRABYTES_v1 : public PULSEreadItemCompressed
 {
 public:
 
-  PULSEreadItemCompressed_EXTRABYTES_v1(EntropyDecoder* dec, U32 number);
+  PULSEreadItemCompressed_EXTRABYTES_v1(ArithmeticDecoder* dec, U32 number);
 
   BOOL init(const U8* item);
   void read(U8* item);
@@ -143,11 +143,11 @@ public:
   ~PULSEreadItemCompressed_EXTRABYTES_v1();
 
 private:
-  EntropyDecoder* dec;
+  ArithmeticDecoder* dec;
   U32 number;
   U8* last_item;
 
-  EntropyModel** m_byte;
+  ArithmeticModel** m_byte;
 };
 
 #endif

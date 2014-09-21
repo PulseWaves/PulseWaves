@@ -67,7 +67,7 @@ struct PULSEpulse0
 #define PULSEZIP_T_MULTI_CODE_FULL (PULSEZIP_T_MULTI_UNCHANGED + 1)
 #define PULSEZIP_T_MULTI_TOTAL     (PULSEZIP_T_MULTI_CODE_FULL + 1) 
 
-PULSEwriteItemCompressed_PULSE0_v1::PULSEwriteItemCompressed_PULSE0_v1(EntropyEncoder* enc)
+PULSEwriteItemCompressed_PULSE0_v1::PULSEwriteItemCompressed_PULSE0_v1(ArithmeticEncoder* enc)
 {
   /* set encoder */
   assert(enc);
@@ -81,10 +81,10 @@ PULSEwriteItemCompressed_PULSE0_v1::PULSEwriteItemCompressed_PULSE0_v1(EntropyEn
   /* create models and integer compressors */
   m_T_diff_multi = enc->createSymbolModel(PULSEZIP_T_MULTI_TOTAL);
   m_T_last_diff_zero = enc->createSymbolModel(3);
-  memset(m_changed_values, 0, PULSEZIP_CHANGED_VALUES_CONTEXT_NUMBER*sizeof(EntropyModel*));
-  memset(m_descriptor_index, 0, PULSEZIP_DESCRIPTOR_CONTEXT_NUMBER*sizeof(EntropyModel*));
-  memset(m_bit_byte, 0, PULSEZIP_BIT_BYTE_CONTEXT_NUMBER*sizeof(EntropyModel*));
-  memset(m_classification, 0, PULSEZIP_CLASSIFICATION_CONTEXT_NUMBER*sizeof(EntropyModel*));
+  memset(m_changed_values, 0, PULSEZIP_CHANGED_VALUES_CONTEXT_NUMBER*sizeof(ArithmeticModel*));
+  memset(m_descriptor_index, 0, PULSEZIP_DESCRIPTOR_CONTEXT_NUMBER*sizeof(ArithmeticModel*));
+  memset(m_bit_byte, 0, PULSEZIP_BIT_BYTE_CONTEXT_NUMBER*sizeof(ArithmeticModel*));
+  memset(m_classification, 0, PULSEZIP_CLASSIFICATION_CONTEXT_NUMBER*sizeof(ArithmeticModel*));
   ic_T = new IntegerCompressor(enc, 32, 9); // 32 bits, 9 contexts
   ic_offset_diff = new IntegerCompressor(enc, 32, PULSEZIP_LAST_OFFSET_DIFF_ARRAY_SIZE);            // 32 bits, PULSEZIP_LAST_OFFSET_DIFF_ARRAY_SIZE context
   ic_anchor_dx = new IntegerCompressor(enc, 32, 4);                // 32 bits, 4 context
@@ -513,7 +513,7 @@ inline void PULSEwriteItemCompressed_PULSE0_v1::write(const U8* item)
 ===============================================================================
 */
 
-PULSEwriteItemCompressed_PULSESOURCEID16_v1::PULSEwriteItemCompressed_PULSESOURCEID16_v1(EntropyEncoder* enc)
+PULSEwriteItemCompressed_PULSESOURCEID16_v1::PULSEwriteItemCompressed_PULSESOURCEID16_v1(ArithmeticEncoder* enc)
 {
   /* set encoder */
   assert(enc);
@@ -592,7 +592,7 @@ inline void PULSEwriteItemCompressed_PULSESOURCEID16_v1::write(const U8* item)
 ===============================================================================
 */
 
-PULSEwriteItemCompressed_PULSESOURCEID32_v1::PULSEwriteItemCompressed_PULSESOURCEID32_v1(EntropyEncoder* enc)
+PULSEwriteItemCompressed_PULSESOURCEID32_v1::PULSEwriteItemCompressed_PULSESOURCEID32_v1(ArithmeticEncoder* enc)
 {
   /* set encoder */
   assert(enc);
@@ -671,7 +671,7 @@ inline void PULSEwriteItemCompressed_PULSESOURCEID32_v1::write(const U8* item)
 ===============================================================================
 */
 
-PULSEwriteItemCompressed_EXTRABYTES_v1::PULSEwriteItemCompressed_EXTRABYTES_v1(EntropyEncoder* enc, U32 number)
+PULSEwriteItemCompressed_EXTRABYTES_v1::PULSEwriteItemCompressed_EXTRABYTES_v1(ArithmeticEncoder* enc, U32 number)
 {
   U32 i;
 
@@ -682,7 +682,7 @@ PULSEwriteItemCompressed_EXTRABYTES_v1::PULSEwriteItemCompressed_EXTRABYTES_v1(E
   this->number = number;
 
   /* create models and integer compressors */
-  m_byte = new EntropyModel*[number];
+  m_byte = new ArithmeticModel*[number];
   for (i = 0; i < number; i++)
   {
     m_byte[i] = enc->createSymbolModel(256);
