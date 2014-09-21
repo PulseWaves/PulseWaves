@@ -34,9 +34,9 @@
 
 #include "pulsereader_pls.hpp"
 #ifndef PULSEWAVES_DLL
-#ifdef PULSEWAVES_LAS
+#ifdef _WIN32
 #include "pulsereader_las.hpp"
-#endif // PULSEWAVES_LAS
+#endif // _WIN32
 #include "pulsereader_gcw.hpp"
 #include "pulsereader_lgw.hpp"
 #endif
@@ -81,9 +81,9 @@ private:
   PULSEreader* pulsereader;
   PULSEreaderPLS* pulsereaderpls;
 #ifndef PULSEWAVES_DLL
-#ifdef PULSEWAVES_LAS
+#ifdef _WIN32
   PULSEreaderLAS* pulsereaderlas;
-#endif // PULSEWAVES_LAS
+#endif // _WIN32
   PULSEreaderGCW* pulsereadergcw;
   PULSEreaderLGW* pulsereaderlgw;
 #endif

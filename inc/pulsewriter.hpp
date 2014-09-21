@@ -68,6 +68,7 @@ public:
   void set_file_name(const char* file_name);
   void set_appendix(const char* appendix);
   void set_format(const char* format);
+  void set_format(I32 format);
   void set_parse_string(const char* parse_string);
   void set_separator(const char* separator);
   void make_numbered_file_name(const char* file_name, I32 digits);
@@ -77,6 +78,7 @@ public:
   BOOL open_waves(PULSEwriter* writer);
 
   BOOL active() const;
+  BOOL is_piped() const;
   const char* get_directory() const;
   const char* get_file_name() const;
   const char* get_appendix() const;
@@ -95,6 +97,7 @@ private:
   char* separator;
   U32 format;
   BOOL compress_waves;
+  BOOL dont_compress_waves;
   BOOL use_stdout;
   BOOL use_stderr;
   BOOL use_nil;

@@ -122,6 +122,7 @@ public:
   // access functions
 
   inline void set_T(const F64 t) { T = quantizer->get_T(t); };
+  inline void set_T(const I64 T) { this->T = T; };
 
   inline I64 get_T() const { return T; };
   inline I64 get_T_msec() const { return quantizer->get_T_msec(T); };

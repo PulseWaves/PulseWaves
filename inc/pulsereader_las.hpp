@@ -74,6 +74,7 @@ private:
   U8 descriptor_map[256];
   WAVESwaves* waves_map[256];
   F64 last_gps_time;
+  U32* seek_map;
 };
 
 #endif

@@ -71,7 +71,7 @@ protected:
   virtual BOOL read_pulse_default();
 
 private:
-  BOOL decompress_waves;
+  BOOL compressed;
   CHAR* file_name;
   FILE* pulse_file;
   FILE* waves_file;

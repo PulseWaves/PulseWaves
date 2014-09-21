@@ -138,6 +138,9 @@ public:                                                    // start byte
     user_data_after_header = 0;
     vlrs = 0;
     avlrs = 0;
+    geokeys = 0;
+    geodouble_params = 0;
+    geoascii_params = 0;
     pulsezip = 0;
     scanners = 0;
     descriptors = 0;
@@ -165,18 +168,18 @@ public:                                                    // start byte
   void del_geodouble_params();
   void del_geoascii_params();
 
-  BOOL add_scanner(const PULSEscanner* scanner, U32 scanner_index, BOOL add_to_vlrs=TRUE);
+  BOOL add_scanner(const PULSEscanner* scanner, U32 scanner_index, BOOL add_to_vlrs);
   BOOL get_scanner(PULSEscanner* scanner, U32 scanner_index) const;
 
-  BOOL add_table(const PULSEtable* table, U32 table_index, BOOL add_to_vlrs=TRUE);
+  BOOL add_table(const PULSEtable* table, U32 table_index, BOOL add_to_vlrs);
   BOOL get_table(PULSEtable* tables, U32 table_index) const;
 
   U32 find_descriptor(const PULSEcomposition* composition, const PULSEsampling* samplings);
   const PULSEdescriptor* get_descriptor(U32 descriptor_index) const;
   BOOL get_descriptor_composition(PULSEcomposition* composition, U32 descriptor_index) const;
   BOOL get_descriptor_samplings(PULSEsampling* samplings, U32 descriptor_index) const;
-  BOOL add_descriptor(const PULSEcomposition* composition, const PULSEsampling* samplings, U32 descriptor_index, BOOL add_to_vlrs=TRUE);
-  U32 add_descriptor(const PULSEcomposition* composition, const PULSEsampling* samplings, BOOL add_to_vlrs=TRUE);
+  BOOL add_descriptor(const PULSEcomposition* composition, const PULSEsampling* samplings, U32 descriptor_index, BOOL add_to_vlrs);
+  U32 add_descriptor_assign_index(const PULSEcomposition* composition, const PULSEsampling* samplings, BOOL add_to_vlrs);
 
   BOOL update_extra_bytes();
 

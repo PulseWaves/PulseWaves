@@ -54,10 +54,10 @@ public:
   BOOL refile_pulse(FILE* file_pulse);
   BOOL refile_waves(FILE* file_waves);
 
-  BOOL open(PULSEheader* header, U32 compress_pulse=0, U32 compress_waves=0);
-  BOOL open(const char* file_name, PULSEheader* header, U32 compress_pulse=0, U32 compress_waves=0, U32 io_buffer_size=65536);
-  BOOL open(FILE* file, PULSEheader* header, U32 compress_pulse=0, U32 compress_waves=0);
-  BOOL open(ostream& ostream, PULSEheader* header, U32 compress_pulse=0, U32 compress_waves=0);
+  BOOL open(PULSEheader* header, U32 compress=0);
+  BOOL open(const char* file_name, PULSEheader* header, U32 compress=0, U32 io_buffer_size=65536);
+  BOOL open(FILE* file, PULSEheader* header, U32 compress=0);
+  BOOL open(ostream& ostream, PULSEheader* header, U32 compress=0);
   BOOL open_waves();
 
   BOOL write_pulse(const PULSEpulse* pulse);
@@ -71,8 +71,7 @@ public:
   ~PULSEwriterPLS();
 
 private:
-  BOOL compress_pulse;
-  BOOL compress_waves;
+  BOOL compress;
   CHAR* file_name;
   FILE* pulse_file;
   FILE* waves_file;
@@ -80,7 +79,7 @@ private:
   ByteStreamOut* waves_stream;
   PULSEwritePulse* pulse_writer;
   PULSEwriteWaves* waves_writer;
-  BOOL open(ByteStreamOut* stream, PULSEheader* header, U32 compress_pulse, U32 compress_waves);
+  BOOL open(ByteStreamOut* stream, PULSEheader* header, U32 compress);
 };
 
 #endif
