@@ -9,9 +9,11 @@
   For updates you can follow PulseWaves at
 
   http://pulsewaves.org
-  http://twitter.com/laserpulsewaves
+  http://github.com/PulseWaves
+  http://twitter.com/LaserPulseWaves
+  http://facebook.com/LaserPulseWaves
 
-  Martin @laserpulsewaves
+  Martin @LaserPulseWaves
 
 ****************************************************************
 
@@ -117,7 +119,11 @@ Supported Pulse Inputs
   -i lidar.las
   -i lidar.laz
   -h
-PULSEtools (by martin.isenburg@rapidlasso.com) version 0.3 rev 8 (131102)
+Supported PULSE Outputs
+  -o pulse.pls
+  -o pulse.pls -owvz
+  -o human_readable.txt
+PULSEtools (by martin.isenburg@rapidlasso.com) version 0.3 rev 11 (140921)
 usage:
 pulseinfo -i pulsewaves.pls -no_check
 pulseinfo -i las13fwf.las -o lidar_info.txt

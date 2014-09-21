@@ -9,9 +9,11 @@
   For updates you can follow PulseWaves at
 
   http://pulsewaves.org
-  http://twitter.com/laserpulsewaves
+  http://github.com/PulseWaves
+  http://twitter.com/LaserPulseWaves
+  http://facebook.com/LaserPulseWaves
 
-  Martin @laserpulsewaves
+  Martin @LaserPulseWaves
 
 ****************************************************************
 
