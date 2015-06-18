@@ -130,7 +130,7 @@ public:
   inline I64 get_T_nsec() const { return quantizer->get_T_nsec(T); };
   inline I64 get_T_psec() const { return quantizer->get_T_psec(T); };
 
-  inline I64 get_t() const { return T; };
+  inline F64 get_t() const { return quantizer->get_t(T); };
   inline F64 get_t_msec() const { return quantizer->get_t_msec(T); };
   inline F64 get_t_usec() const { return quantizer->get_t_usec(T); };
   inline F64 get_t_nsec() const { return quantizer->get_t_nsec(T); };

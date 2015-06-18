@@ -56,8 +56,8 @@ public:
   BOOL filter(const PULSEpulse* pulse);
   void reset();
 
-  void addClipCircle(F64 x, F64 y, F64 radius);
-  void addClipBox(F64 min_x, F64 min_y, F64 min_z, F64 max_x, F64 max_y, F64 max_z);
+  void addKeepCircle(F64 x, F64 y, F64 radius);
+  void addKeepBox(F64 min_x, F64 min_y, F64 min_z, F64 max_x, F64 max_y, F64 max_z);
 
   PULSEfilter();
   ~PULSEfilter();
