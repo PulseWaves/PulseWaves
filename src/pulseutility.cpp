@@ -436,6 +436,7 @@ PULSEhistogram::PULSEhistogram()
   is_active = FALSE;
   // counter bins
   T_bin = 0;
+  time_bin = 0;
   offset_bin = 0;
   anchor_x_bin = 0;
   anchor_y_bin = 0;
@@ -459,6 +460,7 @@ PULSEhistogram::~PULSEhistogram()
 {
   // counter bins
   if (T_bin) delete T_bin;
+  if (time_bin) delete time_bin;
   if (offset_bin) delete offset_bin;
   if (anchor_x_bin) delete anchor_x_bin;
   if (anchor_y_bin) delete anchor_y_bin;
@@ -519,6 +521,8 @@ BOOL PULSEhistogram::histo(const char* name, F32 step)
 {
   if (strstr(name, "T") != 0)
     T_bin = new PULSEbin(step);
+  else if (strstr(name, "time") != 0)
+    time_bin = new PULSEbin(step);
   else if (strstr(name, "offset") != 0)
     offset_bin = new PULSEbin(step);
   else if (strcmp(name, "anchor_x") == 0)
@@ -589,6 +593,7 @@ void PULSEhistogram::add(const PULSEpulse* pulse)
 {
   // counter bins
   if (T_bin) T_bin->add(pulse->T);
+  if (time_bin) time_bin->add(pulse->get_t());
   if (offset_bin) offset_bin->add(pulse->offset);
   if (anchor_x_bin) anchor_x_bin->add(pulse->get_anchor_x());
   if (anchor_y_bin) anchor_y_bin->add(pulse->get_anchor_y());
@@ -611,7 +616,8 @@ void PULSEhistogram::add(const PULSEpulse* pulse)
 void PULSEhistogram::report(FILE* file) const
 {
   // counter bins
-  if (T_bin) T_bin->report(file, "raw T timestamp");
+  if (T_bin) T_bin->report(file, "raw T time stamps");
+  if (time_bin) time_bin->report(file, "double-precision float GPS time stamps");
   if (offset_bin) offset_bin->report(file, "offset");
   if (anchor_x_bin) anchor_x_bin->report(file, "x of anchor");
   if (anchor_y_bin) anchor_y_bin->report(file, "y of anchor");

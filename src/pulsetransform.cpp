@@ -238,7 +238,7 @@ private:
 class PULSEoperationTranslateRawX : public PULSEoperation
 {
 public:
-  inline const char* name() const { return "translate_raw_X"; };
+  inline const char* name() const { return "translate_X"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d ", name(), offset_X); };
   inline void transform(PULSEpulse* pulse) const {
     pulse->anchor_X += offset_X;
@@ -252,7 +252,7 @@ private:
 class PULSEoperationTranslateRawY : public PULSEoperation
 {
 public:
-  inline const char* name() const { return "translate_raw_Y"; };
+  inline const char* name() const { return "translate_Y"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d ", name(), offset_Y); };
   inline void transform(PULSEpulse* pulse) const {
     pulse->anchor_Y += offset_Y;
@@ -266,7 +266,7 @@ private:
 class PULSEoperationTranslateRawZ : public PULSEoperation
 {
 public:
-  inline const char* name() const { return "translate_raw_Z"; };
+  inline const char* name() const { return "translate_Z"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d ", name(), offset_Z); };
   inline void transform(PULSEpulse* pulse) const {
     pulse->anchor_Z += offset_Z;
@@ -280,7 +280,7 @@ private:
 class PULSEoperationTranslateRawXYZ : public PULSEoperation
 {
 public:
-  inline const char* name() const { return "translate_raw_XYZ"; };
+  inline const char* name() const { return "translate_XYZ"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d %d %d ", name(), offset[0], offset[1], offset[2]); };
   inline void transform(PULSEpulse* pulse) const {
     pulse->anchor_X += offset[0];
@@ -338,13 +338,13 @@ private:
   F32 scale;
 };
 
-class PULSEoperationSetMirrorFacetTo : public PULSEoperation
+class PULSEoperationSetMirrorFacet : public PULSEoperation
 {
 public:
-  inline const char* name() const { return "set_mirror_facet_to"; };
+  inline const char* name() const { return "set_mirror_facet"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d ", name(), facet); };
   inline void transform(PULSEpulse* pulse) const { pulse->mirror_facet = facet; };
-  PULSEoperationSetMirrorFacetTo(U8 facet) { this->facet = (facet & 3); };
+  PULSEoperationSetMirrorFacet(U8 facet) { this->facet = (facet & 3); };
 private:
   U8 facet;
 };
@@ -361,13 +361,13 @@ private:
   U8 facet_to;
 };
 
-class PULSEoperationSetClassificationTo : public PULSEoperation
+class PULSEoperationSetClassification : public PULSEoperation
 {
 public:
-  inline const char* name() const { return "set_classification_to"; };
+  inline const char* name() const { return "set_classification"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d ", name(), classification); };
   inline void transform(PULSEpulse* pulse) const { pulse->classification = classification; };
-  PULSEoperationSetClassificationTo(U8 classification) { this->classification = classification; };
+  PULSEoperationSetClassification(U8 classification) { this->classification = classification; };
 private:
   U8 classification;
 };
@@ -384,41 +384,56 @@ private:
   U8 class_to;
 };
 
-class PULSEoperationSetPointSourceTo : public PULSEoperation
+class PULSEoperationSetPointSource : public PULSEoperation
 {
 public:
-  inline const char* name() const { return "set_pulse_source_to"; };
+  inline const char* name() const { return "set_pulse_source_ID"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d ", name(), psid); };
   inline void transform(PULSEpulse* pulse) const { pulse->pulse_source_ID = psid; };
-  PULSEoperationSetPointSourceTo(U16 psid) { this->psid = psid; };
+  PULSEoperationSetPointSource(U16 psid) { this->psid = psid; };
 private:
   U16 psid;
 };
 
-class PULSEoperationChangePointSourceFromTo : public PULSEoperation
+class PULSEoperationChangePointSourceIDFromTo : public PULSEoperation
 {
 public:
-  inline const char* name() const { return "change_pulse_source_from_to"; };
+  inline const char* name() const { return "change_pulse_source_ID_from_to"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d %d ", name(), psid_from, psid_to); };
   inline void transform(PULSEpulse* pulse) const { if (pulse->pulse_source_ID == psid_from) pulse->pulse_source_ID = psid_to; };
-  PULSEoperationChangePointSourceFromTo(U16 psid_from, U16 psid_to) { this->psid_from = psid_from; this->psid_to = psid_to; };
+  PULSEoperationChangePointSourceIDFromTo(U16 psid_from, U16 psid_to) { this->psid_from = psid_from; this->psid_to = psid_to; };
 private:
   U16 psid_from;
   U16 psid_to;
 };
 
-/*
 class PULSEoperationTranslateGpsTime : public PULSEoperation
 {
 public:
-  inline const char* name() const { return "translate_gps_time"; };
+  inline const char* name() const { return "translate_time"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), offset); };
-  inline void transform(PULSEpulse* pulse) const { pulse->gps_time += offset; };
+  inline void transform(PULSEpulse* pulse) const { pulse->set_T(pulse->get_t() + offset); };
   PULSEoperationTranslateGpsTime(F64 offset) { this->offset = offset; };
 private:
   F64 offset;
 };
 
+class PULSEoperationTranslateT : public PULSEoperation
+{
+public:
+  inline const char* name() const { return "translate_T"; };
+#ifdef _WIN32
+  inline int get_command(char* string) const { return sprintf(string, "-%s %I64d ", name(), offset); };
+#else
+  inline int get_command(char* string) const { return sprintf(string, "-%s %lld ", name(), offset); };
+#endif
+  inline void transform(PULSEpulse* pulse) const { pulse->set_T(pulse->get_T() + offset); };
+  PULSEoperationTranslateT(I64 offset) { this->offset = offset; };
+private:
+  I64 offset;
+};
+
+/*
 class PULSEoperationConvertAdjustedGpsToWeek : public PULSEoperation
 {
 public:
@@ -460,15 +475,6 @@ public:
   inline int get_command(char* string) const { return sprintf(string, "-%s ", name()); };
   inline void transform(PULSEpulse* pulse) const { pulse->rgb[0] = pulse->rgb[0]*256; pulse->rgb[1] = pulse->rgb[1]*256; pulse->rgb[2] = pulse->rgb[2]*256; };
 };
-
-class PULSEoperationFlipWaveformDirection : public PULSEoperation
-{
-public:
-  inline const char* name() const { return "flip_waveform_direction"; };
-  inline int get_command(char* string) const { return sprintf(string, "-%s ", name()); };
-  inline void transform(PULSEpulse* pulse) const { pulse->wavepacket.flipDirection(); };
-};
-
 */
 
 void PULSEtransform::clean()
@@ -498,21 +504,26 @@ void PULSEtransform::usage() const
 //  fprintf(stderr,"  -rotate_xy 15.0 620000 4100000 (angle + origin)\n");
 //  fprintf(stderr,"  -translate_then_scale_y -0.5 1.001\n");
   fprintf(stderr,"Transform raw XYZ integers.\n");
-  fprintf(stderr,"  -translate_raw_Z 20\n");
-  fprintf(stderr,"  -translate_raw_XYZ 2 2 0\n");
+  fprintf(stderr,"  -translate_Z 20\n");
+  fprintf(stderr,"  -translate_XYZ 2 2 0\n");
   fprintf(stderr,"Transform intensity.\n");
   fprintf(stderr,"  -scale_intensity 2.5\n");
   fprintf(stderr,"  -translate_intensity 50\n");
   fprintf(stderr,"  -translate_then_scale_intensity 0.5 3.1\n");
   fprintf(stderr,"Modify the classification.\n");
-  fprintf(stderr,"  -set_classification_to 2\n");
+  fprintf(stderr,"  -set_classification 2\n");
   fprintf(stderr,"  -change_classification_from_to 2 4\n");
   fprintf(stderr,"Modify the pulse source ID.\n");
-  fprintf(stderr,"  -set_pulse_source_to 500\n");
-  fprintf(stderr,"  -change_pulse_source_from_to 1023 1024\n");
+  fprintf(stderr,"  -set_pulse_source_ID 500\n");
+  fprintf(stderr,"  -change_pulse_source_ID_from_to 1023 1024\n");
+  fprintf(stderr,"Transform the time stamps.\n");
+  fprintf(stderr,"  -translate_T 40500000\n");
+  fprintf(stderr,"  -translate_time 40.50\n");
+  fprintf(stderr,"Transform flags and else.\n");
+  fprintf(stderr,"  -set_mirror_facet 0\n");
+  fprintf(stderr,"  -change_mirror_facet_from_to 1 2\n");
+  
 /*
-  fprintf(stderr,"Transform gps_time.\n");
-  fprintf(stderr,"  -translate_gps_time 40.50\n");
   fprintf(stderr,"  -adjusted_to_week\n");
   fprintf(stderr,"  -week_to_adjusted 1671\n");
 */
@@ -682,7 +693,7 @@ BOOL PULSEtransform::parse(int argc, char* argv[])
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3; 
     }
 */
-    else if (strcmp(argv[i],"-translate_raw_X") == 0)
+    else if (strcmp(argv[i],"-translate_X") == 0)
     {
       if ((i+1) >= argc)
       {
@@ -693,7 +704,7 @@ BOOL PULSEtransform::parse(int argc, char* argv[])
       add_operation(new PULSEoperationTranslateRawX((I32)atoi(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
     }
-    else if (strcmp(argv[i],"-translate_raw_Y") == 0)
+    else if (strcmp(argv[i],"-translate_Y") == 0)
     {
       if ((i+1) >= argc)
       {
@@ -704,7 +715,7 @@ BOOL PULSEtransform::parse(int argc, char* argv[])
       add_operation(new PULSEoperationTranslateRawY((I32)atoi(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
     }
-    else if (strcmp(argv[i],"-translate_raw_Z") == 0)
+    else if (strcmp(argv[i],"-translate_Z") == 0)
     {
       if ((i+1) >= argc)
       {
@@ -715,7 +726,7 @@ BOOL PULSEtransform::parse(int argc, char* argv[])
       add_operation(new PULSEoperationTranslateRawZ((I32)atoi(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
     }
-    else if (strcmp(argv[i],"-translate_raw_XYZ") == 0)
+    else if (strcmp(argv[i],"-translate_XYZ") == 0)
     {
       if ((i+3) >= argc)
       {
@@ -756,14 +767,14 @@ BOOL PULSEtransform::parse(int argc, char* argv[])
       add_operation(new PULSEoperationTranslateThenScaleIntensity((F32)atof(argv[i+1]), (F32)atof(argv[i+2])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
     }
-    else if (strcmp(argv[i],"-set_mirror_facet_to") == 0)
+    else if (strcmp(argv[i],"-set_mirror_facet") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: facet\n", argv[i]);
         return FALSE;
       }
-      add_operation(new PULSEoperationSetMirrorFacetTo((U8)atoi(argv[i+1])));
+      add_operation(new PULSEoperationSetMirrorFacet((U8)atoi(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
     }
     else if (strcmp(argv[i],"-change_mirror_facet_from_to") == 0)
@@ -776,14 +787,14 @@ BOOL PULSEtransform::parse(int argc, char* argv[])
       add_operation(new PULSEoperationChangeMirrorFacetFromTo((U8)atoi(argv[i+1]), (U8)atoi(argv[i+2])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
     }
-    else if (strcmp(argv[i],"-set_classification_to") == 0)
+    else if (strcmp(argv[i],"-set_classification") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: classification\n", argv[i]);
         return FALSE;
       }
-      add_operation(new PULSEoperationSetClassificationTo((U8)atoi(argv[i+1])));
+      add_operation(new PULSEoperationSetClassification((U8)atoi(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
     }
     else if (strcmp(argv[i],"-change_classification_from_to") == 0)
@@ -796,28 +807,41 @@ BOOL PULSEtransform::parse(int argc, char* argv[])
       add_operation(new PULSEoperationChangeClassificationFromTo((U8)atoi(argv[i+1]), (U8)atoi(argv[i+2])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
     }
-    else if (strcmp(argv[i],"-set_pulse_source_to") == 0)
+    else if (strcmp(argv[i],"-set_pulse_source_ID") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' need 1 arguments: psid\n", argv[i]);
         return FALSE;
       }
-      add_operation(new PULSEoperationSetPointSourceTo((U16)atoi(argv[i+1])));
+      add_operation(new PULSEoperationSetPointSource((U16)atoi(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
     }
-    else if (strcmp(argv[i],"-change_pulse_source_from_to") == 0)
+    else if (strcmp(argv[i],"-change_pulse_source_ID_from_to") == 0)
     {
       if ((i+2) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 2 arguments: from_psid to_psid\n", argv[i]);
         return FALSE;
       }
-      add_operation(new PULSEoperationChangePointSourceFromTo((U16)atoi(argv[i+1]), (U16)atoi(argv[i+2])));
+      add_operation(new PULSEoperationChangePointSourceIDFromTo((U16)atoi(argv[i+1]), (U16)atoi(argv[i+2])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
     }
-/*
-    else if (strcmp(argv[i],"-translate_gps_time") == 0)
+    else if (strcmp(argv[i],"-translate_T") == 0)
+    {
+      if ((i+1) >= argc)
+      {
+        fprintf(stderr,"ERROR: '%s' needs 1 argument: offset\n", argv[i]);
+        return FALSE;
+      }
+#ifdef _WIN32
+      add_operation(new PULSEoperationTranslateT(_atoi64(argv[i+1])));
+#else
+      add_operation(new PULSEoperationTranslateT(atoill(argv[i+1])));
+#endif
+      *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
+    }
+    else if (strcmp(argv[i],"-translate_time") == 0 || strcmp(argv[i],"-translate_gps_time") == 0)
     {
       if ((i+1) >= argc)
       {
@@ -827,6 +851,7 @@ BOOL PULSEtransform::parse(int argc, char* argv[])
       add_operation(new PULSEoperationTranslateGpsTime(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
     }
+/*
     else if (strcmp(argv[i],"-adjusted_to_week") == 0)
     {
       add_operation(new PULSEoperationConvertAdjustedGpsToWeek());

@@ -13,7 +13,7 @@
   
   COPYRIGHT:
   
-    (c) 2007-2013, martin isenburg, rapidlasso - fast tools to catch reality
+    (c) 2007-2015, martin isenburg, rapidlasso - fast tools to catch reality
 
     This is free software; you can redistribute and/or modify it under the
     terms of the GNU Lesser General Licence as published by the Free Software
@@ -34,475 +34,479 @@
 #include <stdlib.h>
 #include <string.h>
 
-class PULSEcriterionClipTile : public PULSEcriterion
+/*
+
+class PULSEcriterionKeepTile : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_tile"; };
+  inline const char* name() const { return "keep_tile"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g %g %g ", name(), ll_x, ll_y, tile_size); };
   inline BOOL filter(const PULSEpulse* pulse) { return (!pulse->inside_tile(ll_x, ll_y, ur_x, ur_y)); };
-  PULSEcriterionClipTile(F32 ll_x, F32 ll_y, F32 tile_size) { this->ll_x = ll_x; this->ll_y = ll_y; this->ur_x = ll_x+tile_size; this->ur_y = ll_y+tile_size; this->tile_size = tile_size; };
+  PULSEcriterionKeepTile(F32 ll_x, F32 ll_y, F32 tile_size) { this->ll_x = ll_x; this->ll_y = ll_y; this->ur_x = ll_x+tile_size; this->ur_y = ll_y+tile_size; this->tile_size = tile_size; };
 private:
   F32 ll_x, ll_y, ur_x, ur_y, tile_size;
 };
 
-class PULSEcriterionClipCircle : public PULSEcriterion
+class PULSEcriterionKeepCircle : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_circle"; };
+  inline const char* name() const { return "keep_circle"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g %g %g ", name(), center_x, center_y, radius); };
   inline BOOL filter(const PULSEpulse* pulse) { return (!pulse->inside_circle(center_x, center_y, radius_squared)); };
-  PULSEcriterionClipCircle(F64 x, F64 y, F64 radius) { this->center_x = x; this->center_y = y; this->radius = radius; this->radius_squared = radius*radius; };
+  PULSEcriterionKeepCircle(F64 x, F64 y, F64 radius) { this->center_x = x; this->center_y = y; this->radius = radius; this->radius_squared = radius*radius; };
 private:
   F64 center_x, center_y, radius, radius_squared;
 };
 
-class PULSEcriterionClipBox : public PULSEcriterion
+class PULSEcriterionKeepBox : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_box"; };
+  inline const char* name() const { return "keep_box"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g %g %g %g %g %g ", name(), min_x, min_y, min_z, max_x, max_y, max_z); };
   inline BOOL filter(const PULSEpulse* pulse) { return (!pulse->inside_box(min_x, min_y, min_z, max_x, max_y, max_z)); };
-  PULSEcriterionClipBox(F64 min_x, F64 min_y, F64 min_z, F64 max_x, F64 max_y, F64 max_z) { this->min_x = min_x; this->min_y = min_y; this->min_z = min_x; this->max_x = max_x; this->max_y = max_y; this->max_z = max_x; };
+  PULSEcriterionKeepBox(F64 min_x, F64 min_y, F64 min_z, F64 max_x, F64 max_y, F64 max_z) { this->min_x = min_x; this->min_y = min_y; this->min_z = min_x; this->max_x = max_x; this->max_y = max_y; this->max_z = max_x; };
 private:
   F64 min_x, min_y, min_z, max_x, max_y, max_z;
 };
 
-class PULSEcriterionClipXY : public PULSEcriterion
+class PULSEcriterionKeepXY : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip"; };
+  inline const char* name() const { return "keep"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g %g %g %g ", name(), below_x, below_y, above_x, above_y); };
   inline BOOL filter(const PULSEpulse* pulse) { return (!pulse->inside_rectangle(below_x, below_y, above_x, above_y)); };
-  PULSEcriterionClipXY(F64 below_x, F64 below_y, F64 above_x, F64 above_y) { this->below_x = below_x; this->below_y = below_y; this->above_x = above_x; this->above_y = above_y; };
+  PULSEcriterionKeepXY(F64 below_x, F64 below_y, F64 above_x, F64 above_y) { this->below_x = below_x; this->below_y = below_y; this->above_x = above_x; this->above_y = above_y; };
 private:
   F64 below_x, below_y, above_x, above_y;
 };
 
-class PULSEcriterionClipZ : public PULSEcriterion
+class PULSEcriterionKeepZ : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_z"; };
+  inline const char* name() const { return "keep_z"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g %g ", name(), below_z, above_z); };
   inline BOOL filter(const PULSEpulse* pulse) { F64 z = pulse->get_anchor_z(); return (z < below_z) || (z > above_z); };
-  PULSEcriterionClipZ(F64 below_z, F64 above_z) { this->below_z = below_z; this->above_z = above_z; };
+  PULSEcriterionKeepZ(F64 below_z, F64 above_z) { this->below_z = below_z; this->above_z = above_z; };
 private:
   F64 below_z, above_z;
 };
 
-class PULSEcriterionClipXBelow : public PULSEcriterion
+class PULSEcriterionDropXBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_x_below"; };
+  inline const char* name() const { return "drop_x_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), below_x); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->get_anchor_x() < below_x); };
-  PULSEcriterionClipXBelow(F64 below_x) { this->below_x = below_x; };
+  PULSEcriterionDropXBelow(F64 below_x) { this->below_x = below_x; };
 private:
   F64 below_x;
 };
 
-class PULSEcriterionClipXAbove : public PULSEcriterion
+class PULSEcriterionDropXAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_x_above"; };
+  inline const char* name() const { return "drop_x_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), above_x); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->get_anchor_x() > above_x); };
-  PULSEcriterionClipXAbove(F64 above_x) { this->above_x = above_x; };
+  PULSEcriterionDropXAbove(F64 above_x) { this->above_x = above_x; };
 private:
   F64 above_x;
 };
 
-class PULSEcriterionClipYBelow : public PULSEcriterion
+class PULSEcriterionDropYBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_y_below"; };
+  inline const char* name() const { return "drop_y_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), below_y); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->get_anchor_y() < below_y); };
-  PULSEcriterionClipYBelow(F64 below_y) { this->below_y = below_y; };
+  PULSEcriterionDropYBelow(F64 below_y) { this->below_y = below_y; };
 private:
   F64 below_y;
 };
 
-class PULSEcriterionClipYAbove : public PULSEcriterion
+class PULSEcriterionDropYAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_y_above"; };
+  inline const char* name() const { return "drop_y_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), above_y); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->get_anchor_y() > above_y); };
-  PULSEcriterionClipYAbove(F64 above_y) { this->above_y = above_y; };
+  PULSEcriterionDropYAbove(F64 above_y) { this->above_y = above_y; };
 private:
   F64 above_y;
 };
 
-class PULSEcriterionClipZBelow : public PULSEcriterion
+class PULSEcriterionDropZBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_z_below"; };
+  inline const char* name() const { return "drop_z_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), below_z); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->get_anchor_z() < below_z); };
-  PULSEcriterionClipZBelow(F64 below_z) { this->below_z = below_z; };
+  PULSEcriterionDropZBelow(F64 below_z) { this->below_z = below_z; };
 private:
   F64 below_z;
 };
 
-class PULSEcriterionClipZAbove : public PULSEcriterion
+class PULSEcriterionDropZAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_z_above"; };
+  inline const char* name() const { return "drop_z_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), above_z); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->get_anchor_z() > above_z); };
-  PULSEcriterionClipZAbove(F64 above_z) { this->above_z = above_z; };
+  PULSEcriterionDropZAbove(F64 above_z) { this->above_z = above_z; };
 private:
   F64 above_z;
 };
 
-class PULSEcriterionClipFirstXY : public PULSEcriterion
+*/
+
+class PULSEcriterionKeepFirstXY : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_first"; };
+  inline const char* name() const { return "keep_first"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g %g %g %g ", name(), below_x, below_y, above_x, above_y); };
   inline BOOL filter(const PULSEpulse* pulse) { F64 x = pulse->compute_and_get_first_x(); if ((x < below_x) || (x >= above_x)) return TRUE; F64 y = pulse->compute_and_get_first_y(); return ((y < below_y) || (y >= above_y)); };
-  PULSEcriterionClipFirstXY(F64 below_x, F64 below_y, F64 above_x, F64 above_y) { this->below_x = below_x; this->below_y = below_y; this->above_x = above_x; this->above_y = above_y; };
+  PULSEcriterionKeepFirstXY(F64 below_x, F64 below_y, F64 above_x, F64 above_y) { this->below_x = below_x; this->below_y = below_y; this->above_x = above_x; this->above_y = above_y; };
 private:
   F64 below_x, below_y, above_x, above_y;
 };
 
-class PULSEcriterionClipFirstZ : public PULSEcriterion
+class PULSEcriterionKeepFirstZ : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_first_z"; };
+  inline const char* name() const { return "keep_first_z"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g %g ", name(), below_z, above_z); };
   inline BOOL filter(const PULSEpulse* pulse) { F64 z = pulse->compute_and_get_first_z(); return ((z < below_z) || (z >= above_z)); };
-  PULSEcriterionClipFirstZ(F64 below_z, F64 above_z) { this->below_z = below_z; this->above_z = above_z; };
+  PULSEcriterionKeepFirstZ(F64 below_z, F64 above_z) { this->below_z = below_z; this->above_z = above_z; };
 private:
   F64 below_z, above_z;
 };
 
-class PULSEcriterionClipFirstXBelow : public PULSEcriterion
+class PULSEcriterionDropFirstXBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_first_x_below"; };
+  inline const char* name() const { return "drop_first_x_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), below_x); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->compute_and_get_first_x() < below_x); };
-  PULSEcriterionClipFirstXBelow(F64 below_x) { this->below_x = below_x; };
+  PULSEcriterionDropFirstXBelow(F64 below_x) { this->below_x = below_x; };
 private:
   F64 below_x;
 };
 
-class PULSEcriterionClipFirstXAbove : public PULSEcriterion
+class PULSEcriterionDropFirstXAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_first_x_above"; };
+  inline const char* name() const { return "drop_first_x_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), above_x); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->compute_and_get_first_x() >= above_x); };
-  PULSEcriterionClipFirstXAbove(F64 above_x) { this->above_x = above_x; };
+  PULSEcriterionDropFirstXAbove(F64 above_x) { this->above_x = above_x; };
 private:
   F64 above_x;
 };
 
-class PULSEcriterionClipFirstYBelow : public PULSEcriterion
+class PULSEcriterionDropFirstYBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_first_y_below"; };
+  inline const char* name() const { return "drop_first_y_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), below_y); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->compute_and_get_first_y() < below_y); };
-  PULSEcriterionClipFirstYBelow(F64 below_y) { this->below_y = below_y; };
+  PULSEcriterionDropFirstYBelow(F64 below_y) { this->below_y = below_y; };
 private:
   F64 below_y;
 };
 
-class PULSEcriterionClipFirstYAbove : public PULSEcriterion
+class PULSEcriterionDropFirstYAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_first_y_above"; };
+  inline const char* name() const { return "drop_first_y_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), above_y); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->compute_and_get_first_y() >= above_y); };
-  PULSEcriterionClipFirstYAbove(F64 above_y) { this->above_y = above_y; };
+  PULSEcriterionDropFirstYAbove(F64 above_y) { this->above_y = above_y; };
 private:
   F64 above_y;
 };
 
-class PULSEcriterionClipFirstZBelow : public PULSEcriterion
+class PULSEcriterionDropFirstZBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_first_z_below"; };
+  inline const char* name() const { return "drop_first_z_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), below_z); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->compute_and_get_first_z() < below_z); };
-  PULSEcriterionClipFirstZBelow(F64 below_z) { this->below_z = below_z; };
+  PULSEcriterionDropFirstZBelow(F64 below_z) { this->below_z = below_z; };
 private:
   F64 below_z;
 };
 
-class PULSEcriterionClipFirstZAbove : public PULSEcriterion
+class PULSEcriterionDropFirstZAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_first_z_above"; };
+  inline const char* name() const { return "drop_first_z_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), above_z); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->compute_and_get_first_z() >= above_z); };
-  PULSEcriterionClipFirstZAbove(F64 above_z) { this->above_z = above_z; };
+  PULSEcriterionDropFirstZAbove(F64 above_z) { this->above_z = above_z; };
 private:
   F64 above_z;
 };
 
-class PULSEcriterionClipLastXY : public PULSEcriterion
+class PULSEcriterionKeepLastXY : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_last"; };
+  inline const char* name() const { return "keep_last"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g %g %g %g ", name(), below_x, below_y, above_x, above_y); };
   inline BOOL filter(const PULSEpulse* pulse) { F64 x = pulse->compute_and_get_last_x(); if ((x < below_x) || (x >= above_x)) return TRUE; F64 y = pulse->compute_and_get_last_y(); return ((y < below_y) || (y >= above_y)); };
-  PULSEcriterionClipLastXY(F64 below_x, F64 below_y, F64 above_x, F64 above_y) { this->below_x = below_x; this->below_y = below_y; this->above_x = above_x; this->above_y = above_y; };
+  PULSEcriterionKeepLastXY(F64 below_x, F64 below_y, F64 above_x, F64 above_y) { this->below_x = below_x; this->below_y = below_y; this->above_x = above_x; this->above_y = above_y; };
 private:
   F64 below_x, below_y, above_x, above_y;
 };
 
-class PULSEcriterionClipLastZ : public PULSEcriterion
+class PULSEcriterionKeepLastZ : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_last_z"; };
+  inline const char* name() const { return "keep_last_z"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g %g ", name(), below_z, above_z); };
   inline BOOL filter(const PULSEpulse* pulse) { F64 z = pulse->compute_and_get_last_z(); return ((z < below_z) || (z >= above_z)); };
-  PULSEcriterionClipLastZ(F64 below_z, F64 above_z) { this->below_z = below_z; this->above_z = above_z; };
+  PULSEcriterionKeepLastZ(F64 below_z, F64 above_z) { this->below_z = below_z; this->above_z = above_z; };
 private:
   F64 below_z, above_z;
 };
 
-class PULSEcriterionClipLastXBelow : public PULSEcriterion
+class PULSEcriterionDropLastXBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_last_x_below"; };
+  inline const char* name() const { return "drop_last_x_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), below_x); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->compute_and_get_last_x() < below_x); };
-  PULSEcriterionClipLastXBelow(F64 below_x) { this->below_x = below_x; };
+  PULSEcriterionDropLastXBelow(F64 below_x) { this->below_x = below_x; };
 private:
   F64 below_x;
 };
 
-class PULSEcriterionClipLastXAbove : public PULSEcriterion
+class PULSEcriterionDropLastXAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_last_x_above"; };
+  inline const char* name() const { return "drop_last_x_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), above_x); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->compute_and_get_last_x() >= above_x); };
-  PULSEcriterionClipLastXAbove(F64 above_x) { this->above_x = above_x; };
+  PULSEcriterionDropLastXAbove(F64 above_x) { this->above_x = above_x; };
 private:
   F64 above_x;
 };
 
-class PULSEcriterionClipLastYBelow : public PULSEcriterion
+class PULSEcriterionDropLastYBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_last_y_below"; };
+  inline const char* name() const { return "drop_last_y_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), below_y); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->compute_and_get_last_y() < below_y); };
-  PULSEcriterionClipLastYBelow(F64 below_y) { this->below_y = below_y; };
+  PULSEcriterionDropLastYBelow(F64 below_y) { this->below_y = below_y; };
 private:
   F64 below_y;
 };
 
-class PULSEcriterionClipLastYAbove : public PULSEcriterion
+class PULSEcriterionDropLastYAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_last_y_above"; };
+  inline const char* name() const { return "drop_last_y_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), above_y); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->compute_and_get_last_y() >= above_y); };
-  PULSEcriterionClipLastYAbove(F64 above_y) { this->above_y = above_y; };
+  PULSEcriterionDropLastYAbove(F64 above_y) { this->above_y = above_y; };
 private:
   F64 above_y;
 };
 
-class PULSEcriterionClipLastZBelow : public PULSEcriterion
+class PULSEcriterionDropLastZBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_last_z_below"; };
+  inline const char* name() const { return "drop_last_z_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), below_z); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->compute_and_get_last_z() < below_z); };
-  PULSEcriterionClipLastZBelow(F64 below_z) { this->below_z = below_z; };
+  PULSEcriterionDropLastZBelow(F64 below_z) { this->below_z = below_z; };
 private:
   F64 below_z;
 };
 
-class PULSEcriterionClipLastZAbove : public PULSEcriterion
+class PULSEcriterionDropLastZAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_last_z_above"; };
+  inline const char* name() const { return "drop_last_z_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), above_z); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->compute_and_get_last_z() >= above_z); };
-  PULSEcriterionClipLastZAbove(F64 above_z) { this->above_z = above_z; };
+  PULSEcriterionDropLastZAbove(F64 above_z) { this->above_z = above_z; };
 private:
   F64 above_z;
 };
 
-class PULSEcriterionClipAnchorXY : public PULSEcriterion
+class PULSEcriterionKeepAnchorXY : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor"; };
+  inline const char* name() const { return "keep_anchor"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g %g %g %g ", name(), below_x, below_y, above_x, above_y); };
   inline BOOL filter(const PULSEpulse* pulse) { F64 x = pulse->get_anchor_x(); if ((x < below_x) || (x >= above_x)) return TRUE; F64 y = pulse->get_anchor_y(); return ((y < below_y) || (y >= above_y)); };
-  PULSEcriterionClipAnchorXY(F64 below_x, F64 below_y, F64 above_x, F64 above_y) { this->below_x = below_x; this->below_y = below_y; this->above_x = above_x; this->above_y = above_y; };
+  PULSEcriterionKeepAnchorXY(F64 below_x, F64 below_y, F64 above_x, F64 above_y) { this->below_x = below_x; this->below_y = below_y; this->above_x = above_x; this->above_y = above_y; };
 private:
   F64 below_x, below_y, above_x, above_y;
 };
 
-class PULSEcriterionClipAnchorZ : public PULSEcriterion
+class PULSEcriterionKeepAnchorZ : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_z"; };
+  inline const char* name() const { return "keep_anchor_z"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g %g ", name(), below_z, above_z); };
   inline BOOL filter(const PULSEpulse* pulse) { F64 z = pulse->get_anchor_z(); return ((z < below_z) || (z >= above_z)); };
-  PULSEcriterionClipAnchorZ(F64 below_z, F64 above_z) { this->below_z = below_z; this->above_z = above_z; };
+  PULSEcriterionKeepAnchorZ(F64 below_z, F64 above_z) { this->below_z = below_z; this->above_z = above_z; };
 private:
   F64 below_z, above_z;
 };
 
-class PULSEcriterionClipAnchorXBelow : public PULSEcriterion
+class PULSEcriterionDropAnchorXBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_x_below"; };
+  inline const char* name() const { return "drop_anchor_x_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), below_x); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->get_anchor_x() < below_x); };
-  PULSEcriterionClipAnchorXBelow(F64 below_x) { this->below_x = below_x; };
+  PULSEcriterionDropAnchorXBelow(F64 below_x) { this->below_x = below_x; };
 private:
   F64 below_x;
 };
 
-class PULSEcriterionClipAnchorXAbove : public PULSEcriterion
+class PULSEcriterionDropAnchorXAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_x_above"; };
+  inline const char* name() const { return "drop_anchor_x_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), above_x); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->get_anchor_x() >= above_x); };
-  PULSEcriterionClipAnchorXAbove(F64 above_x) { this->above_x = above_x; };
+  PULSEcriterionDropAnchorXAbove(F64 above_x) { this->above_x = above_x; };
 private:
   F64 above_x;
 };
 
-class PULSEcriterionClipAnchorYBelow : public PULSEcriterion
+class PULSEcriterionDropAnchorYBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_y_below"; };
+  inline const char* name() const { return "drop_anchor_y_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), below_y); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->get_anchor_y() < below_y); };
-  PULSEcriterionClipAnchorYBelow(F64 below_y) { this->below_y = below_y; };
+  PULSEcriterionDropAnchorYBelow(F64 below_y) { this->below_y = below_y; };
 private:
   F64 below_y;
 };
 
-class PULSEcriterionClipAnchorYAbove : public PULSEcriterion
+class PULSEcriterionDropAnchorYAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_y_above"; };
+  inline const char* name() const { return "drop_anchor_y_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), above_y); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->get_anchor_y() >= above_y); };
-  PULSEcriterionClipAnchorYAbove(F64 above_y) { this->above_y = above_y; };
+  PULSEcriterionDropAnchorYAbove(F64 above_y) { this->above_y = above_y; };
 private:
   F64 above_y;
 };
 
-class PULSEcriterionClipAnchorZBelow : public PULSEcriterion
+class PULSEcriterionDropAnchorZBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_z_below"; };
+  inline const char* name() const { return "drop_anchor_z_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), below_z); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->get_anchor_z() < below_z); };
-  PULSEcriterionClipAnchorZBelow(F64 below_z) { this->below_z = below_z; };
+  PULSEcriterionDropAnchorZBelow(F64 below_z) { this->below_z = below_z; };
 private:
   F64 below_z;
 };
 
-class PULSEcriterionClipAnchorZAbove : public PULSEcriterion
+class PULSEcriterionDropAnchorZAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_z_above"; };
+  inline const char* name() const { return "drop_anchor_z_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), above_z); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->get_anchor_z() >= above_z); };
-  PULSEcriterionClipAnchorZAbove(F64 above_z) { this->above_z = above_z; };
+  PULSEcriterionDropAnchorZAbove(F64 above_z) { this->above_z = above_z; };
 private:
   F64 above_z;
 };
 
-class PULSEcriterionClipAnchorRawXY : public PULSEcriterion
+class PULSEcriterionKeepAnchorRawXY : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_raw_xy"; };
+  inline const char* name() const { return "keep_anchor_raw_xy"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d %d %d %d ", name(), below_X, below_Y, above_X, above_Y); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->anchor_X < below_X) || (pulse->anchor_X <= below_X) || (pulse->anchor_Y >= above_Y) || (pulse->anchor_Y >= above_Y); };
-  PULSEcriterionClipAnchorRawXY(I32 below_X, I32 below_Y, I32 above_X, I32 above_Y) { this->below_X = below_X; this->below_Y = below_Y; this->above_X = above_X; this->above_Y = above_Y; };
+  PULSEcriterionKeepAnchorRawXY(I32 below_X, I32 below_Y, I32 above_X, I32 above_Y) { this->below_X = below_X; this->below_Y = below_Y; this->above_X = above_X; this->above_Y = above_Y; };
 private:
   I32 below_X, below_Y, above_X, above_Y;
 };
 
-class PULSEcriterionClipAnchorRawZ : public PULSEcriterion
+class PULSEcriterionKeepAnchorRawZ : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_raw_z"; };
+  inline const char* name() const { return "keep_anchor_raw_z"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d %d ", name(), below_Z, above_Z); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->anchor_Z < below_Z) || (pulse->anchor_Z > above_Z); };
-  PULSEcriterionClipAnchorRawZ(I32 below_Z, I32 above_Z) { this->below_Z = below_Z; this->above_Z = above_Z; };
+  PULSEcriterionKeepAnchorRawZ(I32 below_Z, I32 above_Z) { this->below_Z = below_Z; this->above_Z = above_Z; };
 private:
   I32 below_Z, above_Z;
 };
 
-class PULSEcriterionClipAnchorRawXBelow : public PULSEcriterion
+class PULSEcriterionDropAnchorRawXBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_raw_x_below"; };
+  inline const char* name() const { return "drop_anchor_raw_x_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d ", name(), below_X); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->anchor_X < below_X); };
-  PULSEcriterionClipAnchorRawXBelow(I32 below_X) { this->below_X = below_X; };
+  PULSEcriterionDropAnchorRawXBelow(I32 below_X) { this->below_X = below_X; };
 private:
   I32 below_X;
 };
 
-class PULSEcriterionClipAnchorRawXAbove : public PULSEcriterion
+class PULSEcriterionDropAnchorRawXAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_raw_x_above"; };
+  inline const char* name() const { return "drop_anchor_raw_x_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d ", name(), above_X); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->anchor_X > above_X); };
-  PULSEcriterionClipAnchorRawXAbove(I32 above_X) { this->above_X = above_X; };
+  PULSEcriterionDropAnchorRawXAbove(I32 above_X) { this->above_X = above_X; };
 private:
   I32 above_X;
 };
 
-class PULSEcriterionClipAnchorRawYBelow : public PULSEcriterion
+class PULSEcriterionDropAnchorRawYBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_raw_y_below"; };
+  inline const char* name() const { return "drop_anchor_raw_y_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d ", name(), below_Y); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->anchor_Y < below_Y); };
-  PULSEcriterionClipAnchorRawYBelow(I32 below_Y) { this->below_Y = below_Y; };
+  PULSEcriterionDropAnchorRawYBelow(I32 below_Y) { this->below_Y = below_Y; };
 private:
   I32 below_Y;
 };
 
-class PULSEcriterionClipAnchorRawYAbove : public PULSEcriterion
+class PULSEcriterionDropAnchorRawYAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_raw_y_above"; };
+  inline const char* name() const { return "drop_anchor_raw_y_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d ", name(), above_Y); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->anchor_Y > above_Y); };
-  PULSEcriterionClipAnchorRawYAbove(I32 above_Y) { this->above_Y = above_Y; };
+  PULSEcriterionDropAnchorRawYAbove(I32 above_Y) { this->above_Y = above_Y; };
 private:
   I32 above_Y;
 };
 
-class PULSEcriterionClipAnchorRawZBelow : public PULSEcriterion
+class PULSEcriterionDropAnchorRawZBelow : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_raw_z_below"; };
+  inline const char* name() const { return "drop_anchor_raw_z_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d ", name(), below_Z); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->anchor_Z < below_Z); };
-  PULSEcriterionClipAnchorRawZBelow(I32 below_Z) { this->below_Z = below_Z; };
+  PULSEcriterionDropAnchorRawZBelow(I32 below_Z) { this->below_Z = below_Z; };
 private:
   I32 below_Z;
 };
 
-class PULSEcriterionClipAnchorRawZAbove : public PULSEcriterion
+class PULSEcriterionDropAnchorRawZAbove : public PULSEcriterion
 {
 public:
-  inline const char* name() const { return "clip_anchor_raw_z_above"; };
+  inline const char* name() const { return "drop_anchor_raw_z_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %d ", name(), above_Z); };
   inline BOOL filter(const PULSEpulse* pulse) { return (pulse->anchor_Z > above_Z); };
-  PULSEcriterionClipAnchorRawZAbove(I32 above_Z) { this->above_Z = above_Z; };
+  PULSEcriterionDropAnchorRawZAbove(I32 above_Z) { this->above_Z = above_Z; };
 private:
   I32 above_Z;
 };
@@ -642,7 +646,7 @@ class PULSEcriterionKeepTime : public PULSEcriterion
 public:
   inline const char* name() const { return "keep_time"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g %g ", name(), below_time, above_time); };
-  inline BOOL filter(const PULSEpulse* pulse) { return (((pulse->T < below_time) || (pulse->T > above_time))); };
+  inline BOOL filter(const PULSEpulse* pulse) { return (((pulse->get_t() < below_time) || (pulse->get_t() > above_time))); };
   PULSEcriterionKeepTime(F64 below_time, F64 above_time) { this->below_time = below_time; this->above_time = above_time; };
 private:
   F64 below_time, above_time;
@@ -653,7 +657,7 @@ class PULSEcriterionDropTimeBelow : public PULSEcriterion
 public:
   inline const char* name() const { return "drop_time_below"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), below_time); };
-  inline BOOL filter(const PULSEpulse* pulse) { return ((pulse->T < below_time)); };
+  inline BOOL filter(const PULSEpulse* pulse) { return ((pulse->get_t() < below_time)); };
   PULSEcriterionDropTimeBelow(F64 below_time) { this->below_time = below_time; };
 private:
   F64 below_time;
@@ -664,7 +668,7 @@ class PULSEcriterionDropTimeAbove : public PULSEcriterion
 public:
   inline const char* name() const { return "drop_time_above"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g ", name(), above_time); };
-  inline BOOL filter(const PULSEpulse* pulse) { return ((pulse->T > above_time)); };
+  inline BOOL filter(const PULSEpulse* pulse) { return ((pulse->get_t() > above_time)); };
   PULSEcriterionDropTimeAbove(F64 above_time) { this->above_time = above_time; };
 private:
   F64 above_time;
@@ -675,10 +679,70 @@ class PULSEcriterionDropTimeBetween : public PULSEcriterion
 public:
   inline const char* name() const { return "drop_time_between"; };
   inline int get_command(char* string) const { return sprintf(string, "-%s %g %g ", name(), below_time, above_time); };
-  inline BOOL filter(const PULSEpulse* pulse) { return (((below_time <= pulse->T) && (pulse->T <= above_time))); };
+  inline BOOL filter(const PULSEpulse* pulse) { return (((below_time <= pulse->get_t()) && (pulse->get_t() <= above_time))); };
   PULSEcriterionDropTimeBetween(F64 below_time, F64 above_time) { this->below_time = below_time; this->above_time = above_time; };
 private:
   F64 below_time, above_time;
+};
+
+class PULSEcriterionKeepT : public PULSEcriterion
+{
+public:
+  inline const char* name() const { return "keep_T"; };
+#ifdef _WIN32
+  inline int get_command(char* string) const { return sprintf(string, "-%s %I64d %I64d ", name(), below_T, above_T); };
+#else
+  inline int get_command(char* string) const { return sprintf(string, "-%s %lld %lld ", name(), below_T, above_T); };
+#endif
+  inline BOOL filter(const PULSEpulse* pulse) { return (((pulse->T < below_T) || (pulse->T > above_T))); };
+  PULSEcriterionKeepT(I64 below_T, I64 above_T) { this->below_T = below_T; this->above_T = above_T; };
+private:
+  I64 below_T, above_T;
+};
+
+class PULSEcriterionDropTbelow : public PULSEcriterion
+{
+public:
+  inline const char* name() const { return "drop_T_below"; };
+#ifdef _WIN32
+  inline int get_command(char* string) const { return sprintf(string, "-%s %I64d ", name(), below_T); };
+#else
+  inline int get_command(char* string) const { return sprintf(string, "-%s %lld ", name(), below_T); };
+#endif
+  inline BOOL filter(const PULSEpulse* pulse) { return ((pulse->T < below_T)); };
+  PULSEcriterionDropTbelow(I64 below_T) { this->below_T = below_T; };
+private:
+  I64 below_T;
+};
+
+class PULSEcriterionDropTabove : public PULSEcriterion
+{
+public:
+  inline const char* name() const { return "drop_T_above"; };
+#ifdef _WIN32
+  inline int get_command(char* string) const { return sprintf(string, "-%s %I64d ", name(), above_T); };
+#else
+  inline int get_command(char* string) const { return sprintf(string, "-%s %lld ", name(), above_T); };
+#endif
+  inline BOOL filter(const PULSEpulse* pulse) { return ((pulse->T > above_T)); };
+  PULSEcriterionDropTabove(I64 above_T) { this->above_T = above_T; };
+private:
+  I64 above_T;
+};
+
+class PULSEcriterionDropTbetween : public PULSEcriterion
+{
+public:
+  inline const char* name() const { return "drop_T_between"; };
+#ifdef _WIN32
+  inline int get_command(char* string) const { return sprintf(string, "-%s %I64d %I64d ", name(), below_T, above_T); };
+#else
+  inline int get_command(char* string) const { return sprintf(string, "-%s %lld %lld ", name(), below_T, above_T); };
+#endif
+  inline BOOL filter(const PULSEpulse* pulse) { return (((below_T <= pulse->T) && (pulse->T <= above_T))); };
+  PULSEcriterionDropTbetween(I64 below_T, I64 above_T) { this->below_T = below_T; this->above_T = above_T; };
+private:
+  I64 below_T, above_T;
 };
 
 class PULSEcriterionKeepDescriptor : public PULSEcriterion
@@ -954,49 +1018,33 @@ void PULSEfilter::clean()
 
 void PULSEfilter::usage() const
 {
-  fprintf(stderr,"Filter pulses based on first and last sample.\n");
-  fprintf(stderr,"  -clip_tile 631000 4834000 1000 (ll_x ll_y size)\n");
-  fprintf(stderr,"  -clip_circle 630250.00 4834750.00 100 (x y radius)\n");
-  fprintf(stderr,"  -clip_box 620000 4830000 100 621000 4831000 200 (min_x min_y min_z max_x max_y max_z)\n");
-  fprintf(stderr,"  -clip 630000 4834000 631000 4836000 (min_x min_y max_x max_y)\n");
-  fprintf(stderr,"  -clip_x_below 630000.50 (min_x)\n");
-  fprintf(stderr,"  -clip_y_below 4834500.25 (min_y)\n");
-  fprintf(stderr,"  -clip_x_above 630500.50 (max_x)\n");
-  fprintf(stderr,"  -clip_y_above 4836000.75 (max_y)\n");
-  fprintf(stderr,"  -clip_z 11.125 130.725 (min_z, max_z)\n");
-  fprintf(stderr,"  -clip_z_below 11.125 (min_z)\n");
-  fprintf(stderr,"  -clip_z_above 130.725 (max_z)\n");
-  fprintf(stderr,"Filter pulses based on first sample.\n");
-  fprintf(stderr,"  -clip_first 630000 4834000 631000 4836000 (min_x min_y max_x max_y)\n");
-  fprintf(stderr,"  -clip_first_x_below 630000.50 (min_x)\n");
-  fprintf(stderr,"  -clip_first_y_below 4834500.25 (min_y)\n");
-  fprintf(stderr,"  -clip_first_x_above 630500.50 (max_x)\n");
-  fprintf(stderr,"  -clip_first_y_above 4836000.75 (max_y)\n");
-  fprintf(stderr,"  -clip_first_z 11.125 130.725 (min_z, max_z)\n");
-  fprintf(stderr,"  -clip_first_z_below 11.125 (min_z)\n");
-  fprintf(stderr,"  -clip_first_z_above 130.725 (max_z)\n");
-  fprintf(stderr,"Filter pulses based on last sample.\n");
-  fprintf(stderr,"  -clip_last 630000 4834000 631000 4836000 (min_x min_y max_x max_y)\n");
-  fprintf(stderr,"  -clip_last_x_below 630000.50 (min_x)\n");
-  fprintf(stderr,"  -clip_last_y_below 4834500.25 (min_y)\n");
-  fprintf(stderr,"  -clip_last_x_above 630500.50 (max_x)\n");
-  fprintf(stderr,"  -clip_last_y_above 4836000.75 (max_y)\n");
-  fprintf(stderr,"  -clip_last_z 11.125 130.725 (min_z, max_z)\n");
-  fprintf(stderr,"  -clip_last_z_below 11.125 (min_z)\n");
-  fprintf(stderr,"  -clip_last_z_above 130.725 (max_z)\n");
+  fprintf(stderr,"Filter pulses based on their first waveform sample.\n");
+  fprintf(stderr,"  -keep_first 630000 4834000 631000 4836000 (min_x min_y max_x max_y)\n");
+  fprintf(stderr,"  -drop_first_x_below 630000.50 (min_x)\n");
+  fprintf(stderr,"  -drop_first_y_below 4834500.25 (min_y)\n");
+  fprintf(stderr,"  -drop_first_x_above 630500.50 (max_x)\n");
+  fprintf(stderr,"  -drop_first_y_above 4836000.75 (max_y)\n");
+  fprintf(stderr,"  -keep_first_z 11.125 130.725 (min_z, max_z)\n");
+  fprintf(stderr,"  -drop_first_z_below 11.125 (min_z)\n");
+  fprintf(stderr,"  -drop_first_z_above 130.725 (max_z)\n");
+  fprintf(stderr,"Filter pulses based on their last waveform sample.\n");
+  fprintf(stderr,"  -keep_last 630000 4834000 631000 4836000 (min_x min_y max_x max_y)\n");
+  fprintf(stderr,"  -drop_last_x_below 630000.50 (min_x)\n");
+  fprintf(stderr,"  -drop_last_y_below 4834500.25 (min_y)\n");
+  fprintf(stderr,"  -drop_last_x_above 630500.50 (max_x)\n");
+  fprintf(stderr,"  -drop_last_y_above 4836000.75 (max_y)\n");
+  fprintf(stderr,"  -keep_last_z 11.125 130.725 (min_z, max_z)\n");
+  fprintf(stderr,"  -drop_last_z_below 11.125 (min_z)\n");
+  fprintf(stderr,"  -drop_last_z_above 130.725 (max_z)\n");
   fprintf(stderr,"Filter pulses based on anchor point.\n");
-  fprintf(stderr,"  -clip_anchor 630000 4834000 631000 4836000 (min_x min_y max_x max_y)\n");
-  fprintf(stderr,"  -clip_anchor_x_below 630000.50 (min_x)\n");
-  fprintf(stderr,"  -clip_anchor_y_below 4834500.25 (min_y)\n");
-  fprintf(stderr,"  -clip_anchor_x_above 630500.50 (max_x)\n");
-  fprintf(stderr,"  -clip_anchor_y_above 4836000.75 (max_y)\n");
-  fprintf(stderr,"  -clip_anchor_z 11.125 130.725 (min_z, max_z)\n");
-  fprintf(stderr,"  -clip_anchor_z_below 11.125 (min_z)\n");
-  fprintf(stderr,"  -clip_anchor_z_above 130.725 (max_z)\n");
-  fprintf(stderr,"Filter pulses based on the scanline flags.\n");
-  fprintf(stderr,"  -drop_scan_direction 0\n");
-  fprintf(stderr,"  -scan_direction_change_only\n");
-  fprintf(stderr,"  -edge_of_scan_line_only\n");
+  fprintf(stderr,"  -keep_anchor 630000 4834000 631000 4836000 (min_x min_y max_x max_y)\n");
+  fprintf(stderr,"  -drop_anchor_x_below 630000.50 (min_x)\n");
+  fprintf(stderr,"  -drop_anchor_y_below 4834500.25 (min_y)\n");
+  fprintf(stderr,"  -drop_anchor_x_above 630500.50 (max_x)\n");
+  fprintf(stderr,"  -drop_anchor_y_above 4836000.75 (max_y)\n");
+  fprintf(stderr,"  -keep_anchor_z 11.125 130.725 (min_z, max_z)\n");
+  fprintf(stderr,"  -drop_anchor_z_below 11.125 (min_z)\n");
+  fprintf(stderr,"  -drop_anchor_z_above 130.725 (max_z)\n");
 /*
   fprintf(stderr,"Filter pulses based on their intensity.\n");
   fprintf(stderr,"  -keep_intensity 20 100\n");
@@ -1012,15 +1060,22 @@ void PULSEfilter::usage() const
   fprintf(stderr,"  -drop_scan_angle_above 15\n");
   fprintf(stderr,"  -drop_scan_angle_between -25 -23\n");
 */
-  fprintf(stderr,"Filter pulses based on their time stamp.\n");
-  fprintf(stderr,"  -keep_time 11.125 130.725\n");
-  fprintf(stderr,"  -drop_time_below 11.125\n");
-  fprintf(stderr,"  -drop_time_above 130.725\n");
-  fprintf(stderr,"  -drop_time_between 22.0 48.0\n");
+  fprintf(stderr,"Filter pulses based on the internally stored integer time stamp.\n");
+  fprintf(stderr,"  -keep_T 401003726000 401003728000\n");
+  fprintf(stderr,"  -drop_T_below 401003726000\n");
+  fprintf(stderr,"  -drop_T_above 401003728000\n");
+  fprintf(stderr,"  -drop_T_between 401003726000 401003728000\n");
+  fprintf(stderr,"Filter pulses based on a double-precision float GPS time stamp.\n");
+  fprintf(stderr,"  -keep_time 401003.726 401003.728\n");
+  fprintf(stderr,"  -drop_time_below 401003.726\n");
+  fprintf(stderr,"  -drop_time_above 401003.728\n");
+  fprintf(stderr,"  -drop_time_between 401003.726 401003.728\n");
   fprintf(stderr,"Filter pulses based on their pulse descriptor.\n");
   fprintf(stderr,"  -keep_descriptor 1 2\n");
   fprintf(stderr,"  -drop_descriptor 0\n");
   fprintf(stderr,"Filter pulses based on scan direction or mirror facet.\n");
+  fprintf(stderr,"  -scan_direction_change_only\n");
+  fprintf(stderr,"  -edge_of_scan_line_only\n");
   fprintf(stderr,"  -keep_scan_direction 1\n");
   fprintf(stderr,"  -drop_scan_direction 0\n");
   fprintf(stderr,"  -keep_facet 1 3\n");
@@ -1028,7 +1083,9 @@ void PULSEfilter::usage() const
   fprintf(stderr,"Filter pulses with simple thinning.\n");
   fprintf(stderr,"  -keep_every_nth 2\n");
   fprintf(stderr,"  -keep_random_fraction 0.1\n");
+/*
   fprintf(stderr,"  -thin_with_grid 1.0\n");
+*/
 }
 
 BOOL PULSEfilter::parse(int argc, char* argv[])
@@ -1056,436 +1113,436 @@ BOOL PULSEfilter::parse(int argc, char* argv[])
       usage();
       return TRUE;
     }
-    else if (strcmp(argv[i],"-clip_tile") == 0)
+/*
+    else if (strcmp(argv[i],"-keep_tile") == 0)
     {
       if ((i+3) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 3 arguments: llx lly size\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipTile((F32)atof(argv[i+1]), (F32)atof(argv[i+2]), (F32)atof(argv[i+3])));
+      add_criterion(new PULSEcriterionKeepTile((F32)atof(argv[i+1]), (F32)atof(argv[i+2]), (F32)atof(argv[i+3])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3; 
     }
-    else if (strcmp(argv[i],"-clip_circle") == 0)
+    else if (strcmp(argv[i],"-keep_circle") == 0)
     {
       if ((i+3) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 3 arguments: center_x center_y radius\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipCircle(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3])));
+      add_criterion(new PULSEcriterionKeepCircle(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; i+=3;
     }
-    else if (strcmp(argv[i],"-clip") == 0 || strcmp(argv[i],"-clip_xy") == 0)
+    else if (strcmp(argv[i],"-keep") == 0 || strcmp(argv[i],"-keep_xy") == 0)
     {
       if ((i+4) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 4 arguments: min_x min_y max_x max_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipXY(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]), atof(argv[i+4])));
+      add_criterion(new PULSEcriterionKeepXY(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]), atof(argv[i+4])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; *argv[i+4]='\0'; i+=4; 
     }
-    else if (strcmp(argv[i],"-clip_box") == 0 || strcmp(argv[i],"-clip_xyz") == 0)
+    else if (strcmp(argv[i],"-keep_box") == 0 || strcmp(argv[i],"-keep_xyz") == 0)
     {
       if ((i+6) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 6 arguments: min_x min_y min_z max_x max_y max_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipBox(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]), atof(argv[i+4]), atof(argv[i+5]), atof(argv[i+6])));
+      add_criterion(new PULSEcriterionKeepBox(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]), atof(argv[i+4]), atof(argv[i+5]), atof(argv[i+6])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; *argv[i+4]='\0'; *argv[i+5]='\0'; *argv[i+6]='\0'; i+=6; 
     }
-    else if (strcmp(argv[i],"-clip_z") == 0)
+    else if (strcmp(argv[i],"-keep_z") == 0)
     {
       if ((i+2) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 2 arguments: min_z max_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipZ(atof(argv[i+1]), atof(argv[i+2])));
+      add_criterion(new PULSEcriterionKeepZ(atof(argv[i+1]), atof(argv[i+2])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
     }
-    else if (strcmp(argv[i],"-clip_x_below") == 0)
+    else if (strcmp(argv[i],"-keep_x_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_x\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipXBelow(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropXBelow(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_y_below") == 0)
+    else if (strcmp(argv[i],"-drop_y_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipYBelow(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropYBelow(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_z_below") == 0)
+    else if (strcmp(argv[i],"-drop_z_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipZBelow(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropZBelow(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_x_above") == 0)
+    else if (strcmp(argv[i],"-drop_x_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_x\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipXAbove(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropXAbove(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_y_above") == 0)
+    else if (strcmp(argv[i],"-drop_y_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipYAbove(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropYAbove(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_z_above") == 0)
+    else if (strcmp(argv[i],"-drop_z_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipZAbove(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropZAbove(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_first") == 0 || strcmp(argv[i],"-clip_first_xy") == 0)
+*/
+    else if (strcmp(argv[i],"-keep_first") == 0 || strcmp(argv[i],"-keep_first_xy") == 0)
     {
       if ((i+4) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 4 arguments: min_x min_y max_x max_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipFirstXY(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]), atof(argv[i+4])));
+      add_criterion(new PULSEcriterionKeepFirstXY(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]), atof(argv[i+4])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; *argv[i+4]='\0'; i+=4; 
     }
-    else if (strcmp(argv[i],"-clip_first_z") == 0)
+    else if (strcmp(argv[i],"-keep_first_z") == 0)
     {
       if ((i+2) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 2 arguments: min_z max_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipFirstZ(atof(argv[i+1]), atof(argv[i+2])));
+      add_criterion(new PULSEcriterionKeepFirstZ(atof(argv[i+1]), atof(argv[i+2])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
     }
-    else if (strcmp(argv[i],"-clip_first_x_below") == 0)
+    else if (strcmp(argv[i],"-drop_first_x_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_x\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipFirstXBelow(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropFirstXBelow(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_first_y_below") == 0)
+    else if (strcmp(argv[i],"-drop_first_y_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipFirstYBelow(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropFirstYBelow(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_first_z_below") == 0)
+    else if (strcmp(argv[i],"-drop_first_z_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipFirstZBelow(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropFirstZBelow(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_first_x_above") == 0)
+    else if (strcmp(argv[i],"-drop_first_x_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_x\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipFirstXAbove(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropFirstXAbove(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_first_y_above") == 0)
+    else if (strcmp(argv[i],"-drop_first_y_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipFirstYAbove(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropFirstYAbove(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_first_z_above") == 0)
+    else if (strcmp(argv[i],"-drop_first_z_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipFirstZAbove(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropFirstZAbove(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_last") == 0 || strcmp(argv[i],"-clip_last_xy") == 0)
+    else if (strcmp(argv[i],"-keep_last") == 0 || strcmp(argv[i],"-keep_last_xy") == 0)
     {
       if ((i+4) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 4 arguments: min_x min_y max_x max_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipLastXY(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]), atof(argv[i+4])));
+      add_criterion(new PULSEcriterionKeepLastXY(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]), atof(argv[i+4])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; *argv[i+4]='\0'; i+=4; 
     }
-    else if (strcmp(argv[i],"-clip_last_z") == 0)
+    else if (strcmp(argv[i],"-drop_last_z") == 0)
     {
       if ((i+2) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 2 arguments: min_z max_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipLastZ(atof(argv[i+1]), atof(argv[i+2])));
+      add_criterion(new PULSEcriterionKeepLastZ(atof(argv[i+1]), atof(argv[i+2])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
     }
-    else if (strcmp(argv[i],"-clip_last_x_below") == 0)
+    else if (strcmp(argv[i],"-drop_last_x_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_x\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipLastXBelow(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropLastXBelow(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_last_y_below") == 0)
+    else if (strcmp(argv[i],"-drop_last_y_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipLastYBelow(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropLastYBelow(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_last_z_below") == 0)
+    else if (strcmp(argv[i],"-drop_last_z_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipLastZBelow(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropLastZBelow(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_last_x_above") == 0)
+    else if (strcmp(argv[i],"-drop_last_x_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_x\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipLastXAbove(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropLastXAbove(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_last_y_above") == 0)
+    else if (strcmp(argv[i],"-drop_last_y_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipLastYAbove(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropLastYAbove(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_last_z_above") == 0)
+    else if (strcmp(argv[i],"-drop_last_z_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipLastZAbove(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropLastZAbove(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_anchor") == 0 || strcmp(argv[i],"-clip_anchor_xy") == 0)
+    else if (strcmp(argv[i],"-keep_anchor") == 0 || strcmp(argv[i],"-keep_anchor_xy") == 0)
     {
       if ((i+4) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 4 arguments: min_x min_y max_x max_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorXY(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]), atof(argv[i+4])));
+      add_criterion(new PULSEcriterionKeepAnchorXY(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]), atof(argv[i+4])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; *argv[i+4]='\0'; i+=4; 
     }
-    else if (strcmp(argv[i],"-clip_anchor_z") == 0)
+    else if (strcmp(argv[i],"-keep_anchor_z") == 0)
     {
       if ((i+2) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 2 arguments: min_z max_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorZ(atof(argv[i+1]), atof(argv[i+2])));
+      add_criterion(new PULSEcriterionKeepAnchorZ(atof(argv[i+1]), atof(argv[i+2])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
     }
-    else if (strcmp(argv[i],"-clip_anchor_x_below") == 0)
+    else if (strcmp(argv[i],"-drop_anchor_x_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_x\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorXBelow(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropAnchorXBelow(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_anchor_y_below") == 0)
+    else if (strcmp(argv[i],"-drop_anchor_y_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorYBelow(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropAnchorYBelow(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_anchor_z_below") == 0)
+    else if (strcmp(argv[i],"-drop_anchor_z_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorZBelow(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropAnchorZBelow(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_anchor_x_above") == 0)
+    else if (strcmp(argv[i],"-drop_anchor_x_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_x\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorXAbove(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropAnchorXAbove(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_anchor_y_above") == 0)
+    else if (strcmp(argv[i],"-drop_anchor_y_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorYAbove(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropAnchorYAbove(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_anchor_z_above") == 0)
+    else if (strcmp(argv[i],"-drop_anchor_z_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorZAbove(atof(argv[i+1])));
+      add_criterion(new PULSEcriterionDropAnchorZAbove(atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    
-    
-    else if (strcmp(argv[i],"-clip_anchor_raw") == 0 || strcmp(argv[i],"-clip_anchor_raw_xy") == 0)
+    else if (strcmp(argv[i],"-keep_anchor_raw") == 0 || strcmp(argv[i],"-keep_anchor_raw_xy") == 0)
     {
       if ((i+4) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 4 arguments: min_raw_x min_raw_y max_raw_x max_raw_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorRawXY(atoi(argv[i+1]), atoi(argv[i+2]), atoi(argv[i+3]), atoi(argv[i+4])));
+      add_criterion(new PULSEcriterionKeepAnchorRawXY(atoi(argv[i+1]), atoi(argv[i+2]), atoi(argv[i+3]), atoi(argv[i+4])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; *argv[i+3]='\0'; *argv[i+4]='\0'; i+=4; 
     }
-    else if (strcmp(argv[i],"-clip_anchor_raw_z") == 0)
+    else if (strcmp(argv[i],"-keep_anchor_raw_z") == 0)
     {
       if ((i+2) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 2 arguments: min_raw_z max_raw_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorRawZ(atoi(argv[i+1]), atoi(argv[i+2])));
+      add_criterion(new PULSEcriterionKeepAnchorRawZ(atoi(argv[i+1]), atoi(argv[i+2])));
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2; 
     }
-    else if (strcmp(argv[i],"-clip_anchor_raw_x_below") == 0)
+    else if (strcmp(argv[i],"-drop_anchor_raw_x_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_raw_x\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorRawXBelow(atoi(argv[i+1])));
+      add_criterion(new PULSEcriterionDropAnchorRawXBelow(atoi(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_anchor_raw_y_below") == 0)
+    else if (strcmp(argv[i],"-drop_anchor_raw_y_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_raw_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorRawYBelow(atoi(argv[i+1])));
+      add_criterion(new PULSEcriterionDropAnchorRawYBelow(atoi(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_anchor_raw_z_below") == 0)
+    else if (strcmp(argv[i],"-drop_anchor_raw_z_below") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: min_raw_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorRawZBelow(atoi(argv[i+1])));
+      add_criterion(new PULSEcriterionDropAnchorRawZBelow(atoi(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_anchor_raw_x_above") == 0)
+    else if (strcmp(argv[i],"-drop_anchor_raw_x_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_raw_x\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorRawXAbove(atoi(argv[i+1])));
+      add_criterion(new PULSEcriterionDropAnchorRawXAbove(atoi(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_anchor_raw_y_above") == 0)
+    else if (strcmp(argv[i],"-drop_anchor_raw_y_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_raw_y\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorRawYAbove(atoi(argv[i+1])));
+      add_criterion(new PULSEcriterionDropAnchorRawYAbove(atoi(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
-    else if (strcmp(argv[i],"-clip_anchor_raw_z_above") == 0)
+    else if (strcmp(argv[i],"-drop_anchor_raw_z_above") == 0)
     {
       if ((i+1) >= argc)
       {
         fprintf(stderr,"ERROR: '%s' needs 1 argument: max_raw_z\n", argv[i]);
         return FALSE;
       }
-      add_criterion(new PULSEcriterionClipAnchorRawZAbove(atoi(argv[i+1])));
+      add_criterion(new PULSEcriterionDropAnchorRawZAbove(atoi(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
     else if (strcmp(argv[i],"-keep_scan_direction") == 0)
@@ -1700,6 +1757,62 @@ BOOL PULSEfilter::parse(int argc, char* argv[])
       } while ((i < argc) && ('0' <= *argv[i]) && (*argv[i] <= '9'));
       i-=1;
     }
+    else if (strcmp(argv[i],"-keep_T") == 0)
+    {
+      if ((i+2) >= argc)
+      {
+        fprintf(stderr,"ERROR: '%s' needs 2 arguments: min max\n", argv[i]);
+        return FALSE;
+      }
+#ifdef _WIN32
+      add_criterion(new PULSEcriterionKeepT(_atoi64(argv[i+1]), _atoi64(argv[i+2])));
+#else
+      add_criterion(new PULSEcriterionKeepT(atoill(argv[i+1]), atoill(argv[i+2])));
+#endif
+      *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
+    }
+    else if (strcmp(argv[i],"-drop_T_below") == 0)
+    {
+      if ((i+1) >= argc)
+      {
+        fprintf(stderr,"ERROR: '%s' needs 1 argument: max_T\n", argv[i]);
+        return FALSE;
+      }
+#ifdef _WIN32
+      add_criterion(new PULSEcriterionDropTbelow(_atoi64(argv[i+1])));
+#else
+      add_criterion(new PULSEcriterionDropTbelow(atoll(argv[i+1])));
+#endif
+      *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
+    }
+    else if (strcmp(argv[i],"-drop_T_above") == 0)
+    {
+      if ((i+1) >= argc)
+      {
+        fprintf(stderr,"ERROR: '%s' needs 1 argument: max_T\n", argv[i]);
+        return FALSE;
+      }
+#ifdef _WIN32
+      add_criterion(new PULSEcriterionDropTabove(_atoi64(argv[i+1])));
+#else
+      add_criterion(new PULSEcriterionDropTabove(atoll(argv[i+1])));
+#endif
+      *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
+    }
+    else if (strcmp(argv[i],"-drop_T_between") == 0)
+    {
+      if ((i+2) >= argc)
+      {
+        fprintf(stderr,"ERROR: '%s' needs 2 arguments: min max\n", argv[i]);
+        return FALSE;
+      }
+#ifdef _WIN32
+      add_criterion(new PULSEcriterionDropTbetween(_atoi64(argv[i+1]), _atoi64(argv[i+2])));
+#else
+      add_criterion(new PULSEcriterionDropTbetween(atoill(argv[i+1]), atoill(argv[i+2])));
+#endif
+      *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
+    }
     else if (strcmp(argv[i],"-keep_time") == 0 || strcmp(argv[i],"-keep_gps_time") == 0)
     {
       if ((i+2) >= argc)
@@ -1760,6 +1873,7 @@ BOOL PULSEfilter::parse(int argc, char* argv[])
       add_criterion(new PULSEcriterionKeepRandomFraction((F32)atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
+/*
     else if (strcmp(argv[i],"-thin_with_grid") == 0)
     {
       if ((i+1) >= argc)
@@ -1770,6 +1884,7 @@ BOOL PULSEfilter::parse(int argc, char* argv[])
       add_criterion(new PULSEcriterionThinWithGrid((F32)atof(argv[i+1])));
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1;
     }
+*/
   }
 
   if (drop_descriptor_mask)
@@ -1804,14 +1919,14 @@ I32 PULSEfilter::unparse(char* string) const
   return n;
 }
 
-void PULSEfilter::addClipCircle(F64 x, F64 y, F64 radius)
+void PULSEfilter::addKeepCircle(F64 x, F64 y, F64 radius)
 {
-  add_criterion(new PULSEcriterionClipCircle(x, y, radius));
+//  add_criterion(new PULSEcriterionKeepCircle(x, y, radius));
 }
 
-void PULSEfilter::addClipBox(F64 min_x, F64 min_y, F64 min_z, F64 max_x, F64 max_y, F64 max_z)
+void PULSEfilter::addKeepBox(F64 min_x, F64 min_y, F64 min_z, F64 max_x, F64 max_y, F64 max_z)
 {
-  add_criterion(new PULSEcriterionClipBox(min_x, min_y, min_z, max_x, max_y, max_z));
+//  add_criterion(new PULSEcriterionKeepBox(min_x, min_y, min_z, max_x, max_y, max_z));
 }
 
 BOOL PULSEfilter::filter(const PULSEpulse* pulse)

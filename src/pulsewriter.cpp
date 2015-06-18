@@ -172,7 +172,7 @@ BOOL PULSEwriteOpener::open_waves(PULSEwriter* reader)
 
 void PULSEwriteOpener::usage() const
 {
-  fprintf(stderr,"Supported PULSE Outputs\n");
+  fprintf(stderr,"Supported Pulse Outputs\n");
   fprintf(stderr,"  -o pulse.pls\n");
   fprintf(stderr,"  -o pulse.pls -owvz\n");
 #ifndef PULSEWAVES_DLL

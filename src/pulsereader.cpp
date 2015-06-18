@@ -39,15 +39,15 @@
 #include "pulsereadermerged.hpp"
 
 #ifndef PULSEWAVES_DLL
+
 #include "pulsereader_lgw.hpp"
 #include "pulsereader_gcw.hpp"
-#include "pulsereader_csd.hpp"
 #ifdef _WIN32
-#include "pulsereader_sdf.hpp"
 #include "pulsereader_las.hpp"
 #endif // _WIN32
 //#include "pulsereader_txt.hpp"
 //#include "pulsereader_dat.hpp"
+
 #endif // PULSEWAVES_DLL
 
 #include <stdlib.h>
@@ -465,43 +465,8 @@ PULSEreader* PULSEreadOpener::open(CHAR* other_file_name)
         }
         return pulsereadergcw;
       }
-      else if (strstr(file_name, ".csd") || strstr(file_name, ".CSD"))
-      {
-        PULSEreaderCSD* pulsereadercsd = 0;
-        if (scale_factor == 0 && offset == 0)
-          pulsereadercsd = new PULSEreaderCSD();
 /*
-        else if (scale_factor != 0 && offset == 0)
-          pulsereadercsd = new PULSEreaderCSDrescale(scale_factor[0], scale_factor[1], scale_factor[2]);
-        else if (scale_factor == 0 && offset != 0)
-          pulsereadercsd = new PULSEreaderCSDreoffset(offset[0], offset[1], offset[2]);
-        else
-          pulsereadercsd = new PULSEreaderCSDrescalereoffset(scale_factor[0], scale_factor[1], scale_factor[2], offset[0], offset[1], offset[2]);
-*/
-        if (!pulsereadercsd->open(file_name))
-        {
-          fprintf(stderr,"ERROR: cannot open pulsereadercsd with file name '%s'\n", file_name);
-          delete pulsereadercsd;
-          return 0;
-        }
-        PULSEindex* index = new PULSEindex();
-        if (index->read(file_name))
-          pulsereadercsd->set_index(index);
-        else
-          delete index;
-        if (filter) pulsereadercsd->set_filter(filter);
-        if (transform) pulsereadercsd->set_transform(transform);
-        if (inside_tile) pulsereadercsd->inside_tile(inside_tile[0], inside_tile[1], inside_tile[2]);
-        if (inside_circle) pulsereadercsd->inside_circle(inside_circle[0], inside_circle[1], inside_circle[2]);
-        if (inside_rectangle) pulsereadercsd->inside_rectangle(inside_rectangle[0], inside_rectangle[1], inside_rectangle[2], inside_rectangle[3]);
-        if (files_are_flightlines)
-        {
-          pulsereadercsd->header.file_source_ID = file_name_current;
-          pulsereadercsd->pulse.pulse_source_ID = file_name_current;
-        }
-        return pulsereadercsd;
-      }
-/*      else if (strstr(file_name, ".dat") || strstr(file_name, ".DAT"))
+      else if (strstr(file_name, ".dat") || strstr(file_name, ".DAT"))
       {
         PULSEreaderDAT* pulsereaderdat;
         if (scale_factor == 0 && offset == 0)
@@ -537,42 +502,6 @@ PULSEreader* PULSEreadOpener::open(CHAR* other_file_name)
       }
 */
 #ifdef _WIN32
-      else if (strstr(file_name, ".sdf") || strstr(file_name, ".SDF"))
-      {
-        PULSEreaderSDF* pulsereadersdf;
-        if (scale_factor == 0 && offset == 0)
-          pulsereadersdf = new PULSEreaderSDF();
-/*
-        else if (scale_factor != 0 && offset == 0)
-          pulsereadersdf = new PULSEreaderSDFrescale(scale_factor[0], scale_factor[1], scale_factor[2]);
-        else if (scale_factor == 0 && offset != 0)
-          pulsereadersdf = new PULSEreaderSDFreoffset(offset[0], offset[1], offset[2]);
-        else
-          pulsereadersdf = new PULSEreaderSDFrescalereoffset(scale_factor[0], scale_factor[1], scale_factor[2], offset[0], offset[1], offset[2]);
-*/
-        if (!pulsereadersdf->open(file_name))
-        {
-          fprintf(stderr,"ERROR: cannot open pulsereadersdf with file name '%s'\n", file_name);
-          delete pulsereadersdf;
-          return 0;
-        }
-        PULSEindex* index = new PULSEindex();
-        if (index->read(file_name))
-          pulsereadersdf->set_index(index);
-        else
-          delete index;
-        if (filter) pulsereadersdf->set_filter(filter);
-        if (transform) pulsereadersdf->set_transform(transform);
-        if (inside_tile) pulsereadersdf->inside_tile(inside_tile[0], inside_tile[1], inside_tile[2]);
-        if (inside_circle) pulsereadersdf->inside_circle(inside_circle[0], inside_circle[1], inside_circle[2]);
-        if (inside_rectangle) pulsereadersdf->inside_rectangle(inside_rectangle[0], inside_rectangle[1], inside_rectangle[2], inside_rectangle[3]);
-        if (files_are_flightlines)
-        {
-          pulsereadersdf->header.file_source_ID = file_name_current;
-          pulsereadersdf->pulse.pulse_source_ID = file_name_current;
-        }
-        return pulsereadersdf;
-      }
       else if (strstr(file_name, ".las") || strstr(file_name, ".laz") || strstr(file_name, ".LAS") || strstr(file_name, ".LAZ"))
       {
         PULSEreaderLAS* pulsereaderlas;
@@ -683,20 +612,6 @@ BOOL PULSEreadOpener::reopen(PULSEreader* pulsereader)
         if (inside_rectangle) pulsereadergcw->inside_rectangle(inside_rectangle[0], inside_rectangle[1], inside_rectangle[2], inside_rectangle[3]);
         return TRUE;
       }
-      else if (strstr(file_name, ".lgc") || strstr(file_name, ".LGC"))
-      {
-        PULSEreaderCSD* pulsereadercsd = (PULSEreaderCSD*)pulsereader;
-        if (!pulsereadercsd->open(file_name))
-        {
-          fprintf(stderr,"ERROR: cannot reopen pulsereadercsd with file name '%s'\n", file_name);
-          return FALSE;
-        }
-        if (filter) pulsereadercsd->reset_filter();
-        if (inside_tile) pulsereadercsd->inside_tile(inside_tile[0], inside_tile[1], inside_tile[2]);
-        if (inside_circle) pulsereadercsd->inside_circle(inside_circle[0], inside_circle[1], inside_circle[2]);
-        if (inside_rectangle) pulsereadercsd->inside_rectangle(inside_rectangle[0], inside_rectangle[1], inside_rectangle[2], inside_rectangle[3]);
-        return TRUE;
-      }
 /*
       else if (strstr(file_name, ".dat") || strstr(file_name, ".DAT"))
       {
@@ -714,20 +629,6 @@ BOOL PULSEreadOpener::reopen(PULSEreader* pulsereader)
       }
 */
 #ifdef _WIN32
-      else if (strstr(file_name, ".sdf") || strstr(file_name, ".SDF"))
-      {
-        PULSEreaderSDF* pulsereadersdf = (PULSEreaderSDF*)pulsereader;
-        if (!pulsereadersdf->open(file_name))
-        {
-          fprintf(stderr,"ERROR: cannot reopen pulsereadersdf with file name '%s'\n", file_name);
-          return FALSE;
-        }
-        if (filter) pulsereadersdf->reset_filter();
-        if (inside_tile) pulsereadersdf->inside_tile(inside_tile[0], inside_tile[1], inside_tile[2]);
-        if (inside_circle) pulsereadersdf->inside_circle(inside_circle[0], inside_circle[1], inside_circle[2]);
-        if (inside_rectangle) pulsereadersdf->inside_rectangle(inside_rectangle[0], inside_rectangle[1], inside_rectangle[2], inside_rectangle[3]);
-        return TRUE;
-      }
       else if (strstr(file_name, ".las") || strstr(file_name, ".laz") || strstr(file_name, ".LAS") || strstr(file_name, ".LAZ"))
       {
         PULSEreaderLAS* pulsereaderlas = (PULSEreaderLAS*)pulsereader;
@@ -775,9 +676,8 @@ void PULSEreadOpener::usage() const
   fprintf(stderr,"  -i lidar.lgw\n");
   fprintf(stderr,"  -i lidar.lgc\n");
 #ifdef _WIN32
-  fprintf(stderr,"  -i lidar.sdf\n");
-  fprintf(stderr,"  -i lidar.las\n");
-  fprintf(stderr,"  -i lidar.laz\n");
+  fprintf(stderr,"  -i lidar13fwf.las\n");
+  fprintf(stderr,"  -i lidar13fwf.laz\n");
 #endif // _WIN32
 #endif // PULSEWAVES_DLL
   fprintf(stderr,"  -h\n");
