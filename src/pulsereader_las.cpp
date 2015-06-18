@@ -30,6 +30,8 @@
 */
 #include "pulsereader_las.hpp"
 
+#ifdef HAVE_LASLIB
+
 #include "bytestreamin.hpp"
 #include "bytestreamin_file.hpp"
 #include "bytestreamin_istream.hpp"
@@ -448,3 +450,5 @@ PULSEreaderLAS::~PULSEreaderLAS()
   if (lasreader) close();
   if (seek_map) free(seek_map);
 }
+
+#endif // HAVE_LASLIB

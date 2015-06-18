@@ -69,9 +69,6 @@
     <ClCompile Include="..\pulsereadermerged.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\pulsereader_sdf.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\pulsereader_pls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -82,9 +79,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\pulsereader_gcw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\pulsereader_csd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\pulsereader.cpp">
@@ -112,9 +106,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\arithmeticdecoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\riwavelib\inc\fwifc.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -242,9 +233,6 @@
     <ClInclude Include="..\..\inc\pulsereader.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\pulsereader_csd.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\pulsereader_gcw.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -255,9 +243,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\pulsereader_pls.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\pulsereader_sdf.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\pulsereadermerged.hpp">

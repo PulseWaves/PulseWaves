@@ -21,12 +21,10 @@
     <ClCompile Include="..\pulsepulse.cpp" />
     <ClCompile Include="..\pulsereader.cpp" />
     <ClCompile Include="..\pulsereadermerged.cpp" />
-    <ClCompile Include="..\pulsereader_csd.cpp" />
     <ClCompile Include="..\pulsereader_gcw.cpp" />
     <ClCompile Include="..\pulsereader_las.cpp" />
     <ClCompile Include="..\pulsereader_lgw.cpp" />
     <ClCompile Include="..\pulsereader_pls.cpp" />
-    <ClCompile Include="..\pulsereader_sdf.cpp" />
     <ClCompile Include="..\pulsereaditemcompressed_v1.cpp" />
     <ClCompile Include="..\pulsereadpulse.cpp" />
     <ClCompile Include="..\pulsereadwaves_compressed.cpp" />
@@ -43,7 +41,6 @@
     <ClCompile Include="..\pulsewritewaves_compressed.cpp" />
     <ClCompile Include="..\pulsewritewaves_raw.cpp" />
     <ClCompile Include="..\pulsezip.cpp" />
-    <ClCompile Include="..\riwavelib\inc\fwifc.c" />
     <ClCompile Include="..\waveswaves.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -59,12 +56,10 @@
     <ClInclude Include="..\..\inc\pulsequantizer.hpp" />
     <ClInclude Include="..\..\inc\pulsereader.hpp" />
     <ClInclude Include="..\..\inc\pulsereadermerged.hpp" />
-    <ClInclude Include="..\..\inc\pulsereader_csd.hpp" />
     <ClInclude Include="..\..\inc\pulsereader_gcw.hpp" />
     <ClInclude Include="..\..\inc\pulsereader_las.hpp" />
     <ClInclude Include="..\..\inc\pulsereader_lgw.hpp" />
     <ClInclude Include="..\..\inc\pulsereader_pls.hpp" />
-    <ClInclude Include="..\..\inc\pulsereader_sdf.hpp" />
     <ClInclude Include="..\..\inc\pulsetransform.hpp" />
     <ClInclude Include="..\..\inc\pulseutility.hpp" />
     <ClInclude Include="..\..\inc\pulsevlrs.hpp" />

@@ -207,18 +207,3 @@ BOOL PULSEwriteWaves::write(const WAVESwaves* waves)
 
   return TRUE;
 }
-
-BOOL PULSEwriteWaves::done()
-{
-
-  return TRUE;
-}
-
-PULSEwriteWaves::PULSEwriteWaves()
-{
-  outstream = 0;
-}
-
-PULSEwriteWaves::~PULSEwriteWaves()
-{
-}

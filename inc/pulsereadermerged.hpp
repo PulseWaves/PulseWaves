@@ -81,9 +81,11 @@ private:
   PULSEreader* pulsereader;
   PULSEreaderPLS* pulsereaderpls;
 #ifndef PULSEWAVES_DLL
+#ifdef HAVE_LASLIB
 #ifdef _WIN32
   PULSEreaderLAS* pulsereaderlas;
 #endif // _WIN32
+#endif // HAVE_LASLIB
   PULSEreaderGCW* pulsereadergcw;
   PULSEreaderLGW* pulsereaderlgw;
 #endif

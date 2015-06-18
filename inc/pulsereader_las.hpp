@@ -31,6 +31,8 @@
 #ifndef PULSE_READER_LAS_HPP
 #define PULSE_READER_LAS_HPP
 
+#ifdef HAVE_LASLIB
+
 #include "pulsereader.hpp"
 
 #include <stdio.h>
@@ -78,3 +80,5 @@ private:
 };
 
 #endif
+
+#endif // HAVE_LASLIB

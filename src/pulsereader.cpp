@@ -501,6 +501,7 @@ PULSEreader* PULSEreadOpener::open(CHAR* other_file_name)
         return pulsereaderdat;
       }
 */
+#ifdef HAVE_LASLIB
 #ifdef _WIN32
       else if (strstr(file_name, ".las") || strstr(file_name, ".laz") || strstr(file_name, ".LAS") || strstr(file_name, ".LAZ"))
       {
@@ -539,6 +540,7 @@ PULSEreader* PULSEreadOpener::open(CHAR* other_file_name)
         return pulsereaderlas;
       }
 #endif // _WIN32
+#endif // HAVE_LASLIB
 #endif // PULSEWAVES_DLL
     }
   }
@@ -628,6 +630,7 @@ BOOL PULSEreadOpener::reopen(PULSEreader* pulsereader)
         return TRUE;
       }
 */
+#ifdef HAVE_LASLIB
 #ifdef _WIN32
       else if (strstr(file_name, ".las") || strstr(file_name, ".laz") || strstr(file_name, ".LAS") || strstr(file_name, ".LAZ"))
       {
@@ -660,6 +663,7 @@ BOOL PULSEreadOpener::reopen(PULSEreader* pulsereader)
 */
       }
 #endif // _WIN32
+#endif // HAVE_LASLIB
 #endif // PULSEWAVES_DLL
     }
   }

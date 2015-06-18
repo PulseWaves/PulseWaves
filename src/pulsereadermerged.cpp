@@ -57,6 +57,7 @@ BOOL PULSEreaderMerged::add_file_name(const char* file_name)
   if (strstr(file_name, ".pls") || strstr(file_name, ".plz") || strstr(file_name, ".PLS") || strstr(file_name, ".PLZ"))
   {
 #ifndef PULSEWAVES_DLL
+#ifdef HAVE_LASLIB
 #ifdef _WIN32
     if (pulsereaderlas)
     {
@@ -64,6 +65,7 @@ BOOL PULSEreaderMerged::add_file_name(const char* file_name)
       return FALSE;
     }
 #endif // _WIN32
+#endif // HAVE_LASLIB
     if (pulsereadergcw)
     {
       fprintf(stderr, "ERROR: cannot mix GCW with PLS. skipping '%s' ...\n", file_name);
@@ -99,10 +101,14 @@ BOOL PULSEreaderMerged::add_file_name(const char* file_name)
       fprintf(stderr, "ERROR: cannot mix LGW with LAS. skipping '%s' ...\n", file_name);
       return FALSE;
     }
+#ifdef HAVE_LASLIB
+#ifdef _WIN32
     if (pulsereaderlas == 0)
     {
       pulsereader = pulsereaderlas = new PULSEreaderLAS();
     }
+#endif // _WIN32
+#endif // HAVE_LASLIB
   }
 #endif // _WIN32
   else if (strstr(file_name, ".gcw") || strstr(file_name, ".GCW"))
@@ -112,6 +118,7 @@ BOOL PULSEreaderMerged::add_file_name(const char* file_name)
       fprintf(stderr, "ERROR: cannot mix PLS with GCW. skipping '%s' ...\n", file_name);
       return FALSE;
     }
+#ifdef HAVE_LASLIB
 #ifdef _WIN32
     if (pulsereaderlas)
     {
@@ -119,6 +126,7 @@ BOOL PULSEreaderMerged::add_file_name(const char* file_name)
       return FALSE;
     }
 #endif // _WIN32
+#endif // HAVE_LASLIB
     if (pulsereaderlgw)
     {
       fprintf(stderr, "ERROR: cannot mix LGW with GCW. skipping '%s' ...\n", file_name);
@@ -136,6 +144,7 @@ BOOL PULSEreaderMerged::add_file_name(const char* file_name)
       fprintf(stderr, "ERROR: cannot mix PLS with LGW. skipping '%s' ...\n", file_name);
       return FALSE;
     }
+#ifdef HAVE_LASLIB
 #ifdef _WIN32
     if (pulsereaderlas)
     {
@@ -143,6 +152,7 @@ BOOL PULSEreaderMerged::add_file_name(const char* file_name)
       return FALSE;
     }
 #endif // _WIN32
+#endif // HAVE_LASLIB
     if (pulsereadergcw)
     {
       fprintf(stderr, "ERROR: cannot mix GCW with LGW. skipping '%s' ...\n", file_name);
@@ -249,6 +259,7 @@ BOOL PULSEreaderMerged::open()
       }
     }
 #ifndef PULSEWAVES_DLL
+#ifdef HAVE_LASLIB
 #ifdef _WIN32
     else if (pulsereaderlas)
     {
@@ -259,6 +270,7 @@ BOOL PULSEreaderMerged::open()
       }
     }
 #endif // _WIN32
+#endif // HAVE_LASLIB
     else if (pulsereadergcw)
     {
       if (!pulsereadergcw->open(file_names[i]))
@@ -637,9 +649,11 @@ void PULSEreaderMerged::clean()
     pulsereader = 0;
     pulsereaderpls = 0;
 #ifndef PULSEWAVES_DLL
+#ifdef HAVE_LASLIB
 #ifdef _WIN32
     pulsereaderlas = 0;
 #endif // _WIN32
+#endif // HAVE_LASLIB
     pulsereadergcw = 0;
     pulsereaderlgw = 0;
 #endif
@@ -684,9 +698,11 @@ PULSEreaderMerged::PULSEreaderMerged()
   pulsereader = 0;
   pulsereaderpls = 0;
 #ifndef PULSEWAVES_DLL
+#ifdef HAVE_LASLIB
 #ifdef _WIN32
   pulsereaderlas = 0;
 #endif // _WIN32
+#endif // HAVE_LASLIB
   pulsereadergcw = 0;
   pulsereaderlgw = 0;
 #endif
@@ -739,6 +755,7 @@ BOOL PULSEreaderMerged::open_next_file()
         delete index;
     }
 #ifndef PULSEWAVES_DLL
+#ifdef HAVE_LASLIB
 #ifdef _WIN32
     else if (pulsereaderlas)
     {
@@ -754,6 +771,7 @@ BOOL PULSEreaderMerged::open_next_file()
         delete index;
     }
 #endif // _WIN32
+#endif // HAVE_LASLIB
     else if (pulsereadergcw)
     {
       if (!pulsereadergcw->open(file_names[file_name_current]))
