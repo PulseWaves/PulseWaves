@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 
   if (argc == 1)
   {
-    fprintf(stderr,"pls2pls.exe is better run in the command line\n");
+    fprintf(stderr,"example1LIB.exe is better run in the command line\n");
     char file_name[256];
     fprintf(stderr,"enter input file: "); fgets(file_name, 256, stdin);
     file_name[strlen(file_name)-1] = '\0';
@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
 
   // loop over pulses and modify them
 
-  // where there is a pulse to read
+  // as long as there is a pulse to read
   while (pulsereader->read_pulse())
   {
     // modify the pulse
