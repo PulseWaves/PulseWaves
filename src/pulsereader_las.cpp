@@ -36,6 +36,7 @@
 #include "bytestreamin_file.hpp"
 #include "bytestreamin_istream.hpp"
 
+#define LASLIB_DLL
 #include "lasreader.hpp"
 #include "laswaveform13reader.hpp"
 
@@ -76,7 +77,7 @@ BOOL PULSEreaderLAS::open(const char* file_name, U32 io_buffer_size)
 
   // make sure the LAS file has pulse data
 
-  if (lasreader->header.point_data_format != 4 && lasreader->header.point_data_format != 5)
+  if (lasreader->header.point_data_format != 4 && lasreader->header.point_data_format != 5 && lasreader->header.point_data_format != 9 && lasreader->header.point_data_format != 10)
   {
     fprintf(stderr,"ERROR: file '%s' contains points of type %d without waveforms\n", file_name, lasreader->header.point_data_format);
     return FALSE;
