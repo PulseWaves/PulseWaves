@@ -657,7 +657,7 @@ BOOL PULSEheader::get_scanner(PULSEscanner* scanner, U32 scanner_index) const
   return FALSE;
 }
 
-BOOL PULSEheader::add_table(const PULSEtable* table, U32 table_index, BOOL add_to_vlrs)
+BOOL PULSEheader::add_table(PULSEtable* table, U32 table_index, BOOL add_to_vlrs) // takes over memory of PULSEtable* table
 {
   if (num_tables < table_index)
   {
@@ -686,7 +686,7 @@ BOOL PULSEheader::add_table(const PULSEtable* table, U32 table_index, BOOL add_t
       return FALSE;
     }
   }
-  *(tables[table_index-1]) = *table;
+  tables[table_index-1] = table;
 
   if (add_to_vlrs)
   {
@@ -1408,6 +1408,36 @@ BOOL PULSEheader::load(ByteStreamIn* stream)
           delete bytestreaminarray;
           if (!add_scanner(&scanner, vlrs[i].record_id - PULSEWAVES_SCANNER_RECORD_ID, FALSE))
           {
+            return FALSE;
+          }
+        }
+        else if ((PULSEWAVES_TABLE_RECORD_ID_MIN <= vlrs[i].record_id) && (vlrs[i].record_id <= PULSEWAVES_TABLE_RECORD_ID_MAX)) // Tables
+        {
+          ByteStreamInArray* bytestreaminarray;
+
+          if (IS_LITTLE_ENDIAN())
+            bytestreaminarray = new ByteStreamInArrayLE(vlrs[i].data, vlrs[i].record_length_after_header);
+          else
+            bytestreaminarray = new ByteStreamInArrayBE(vlrs[i].data, vlrs[i].record_length_after_header);
+
+          if (bytestreaminarray == 0)
+          {
+            fprintf(stderr,"ERROR: allocating memory for bytestreaminarray for vlrs[%d]\n", i);
+            return FALSE;
+          }
+
+          PULSEtable* table = new PULSEtable();
+          if (!table->load(bytestreaminarray))
+          {
+            fprintf(stderr,"ERROR: parsing table %d\n", vlrs[i].record_id - PULSEWAVES_TABLE_RECORD_ID);
+            delete table;
+            delete bytestreaminarray;
+            return FALSE;
+          }
+          delete bytestreaminarray;
+          if (!add_table(table, vlrs[i].record_id - PULSEWAVES_TABLE_RECORD_ID, FALSE))
+          {
+            delete table;
             return FALSE;
           }
         }

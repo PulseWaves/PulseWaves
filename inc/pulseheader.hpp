@@ -171,7 +171,8 @@ public:                                                    // start byte
   BOOL add_scanner(const PULSEscanner* scanner, U32 scanner_index, BOOL add_to_vlrs);
   BOOL get_scanner(PULSEscanner* scanner, U32 scanner_index) const;
 
-  BOOL add_table(const PULSEtable* table, U32 table_index, BOOL add_to_vlrs);
+//  BOOL add_table(const PULSEtable* table, U32 table_index, BOOL add_to_vlrs);
+  BOOL add_table(PULSEtable* table, U32 table_index, BOOL add_to_vlrs);
   BOOL get_table(PULSEtable* tables, U32 table_index) const;
 
   U32 find_descriptor(const PULSEcomposition* composition, const PULSEsampling* samplings);
