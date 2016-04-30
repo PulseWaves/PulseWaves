@@ -837,7 +837,7 @@ BOOL PULSEtransform::parse(int argc, char* argv[])
 #ifdef _WIN32
       add_operation(new PULSEoperationTranslateT(_atoi64(argv[i+1])));
 #else
-      add_operation(new PULSEoperationTranslateT(atoill(argv[i+1])));
+      add_operation(new PULSEoperationTranslateT(atoll(argv[i+1])));
 #endif
       *argv[i]='\0'; *argv[i+1]='\0'; i+=1; 
     }
