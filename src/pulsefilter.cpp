@@ -1767,7 +1767,7 @@ BOOL PULSEfilter::parse(int argc, char* argv[])
 #ifdef _WIN32
       add_criterion(new PULSEcriterionKeepT(_atoi64(argv[i+1]), _atoi64(argv[i+2])));
 #else
-      add_criterion(new PULSEcriterionKeepT(atoill(argv[i+1]), atoill(argv[i+2])));
+      add_criterion(new PULSEcriterionKeepT(atoll(argv[i+1]), atoll(argv[i+2])));
 #endif
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
     }
@@ -1809,7 +1809,7 @@ BOOL PULSEfilter::parse(int argc, char* argv[])
 #ifdef _WIN32
       add_criterion(new PULSEcriterionDropTbetween(_atoi64(argv[i+1]), _atoi64(argv[i+2])));
 #else
-      add_criterion(new PULSEcriterionDropTbetween(atoill(argv[i+1]), atoill(argv[i+2])));
+      add_criterion(new PULSEcriterionDropTbetween(atoll(argv[i+1]), atoll(argv[i+2])));
 #endif
       *argv[i]='\0'; *argv[i+1]='\0'; *argv[i+2]='\0'; i+=2;
     }
