@@ -3,3 +3,4 @@ exampleLIB
 *.o
 *.suo
 *.sdf
+build/
